@@ -1,0 +1,31 @@
+register_no,full_name,department,year,hosteller
+2024CS001,Aarav Patel,Computer Science,2,1
+2024CS002,Diya Nair,Computer Science,2,1
+2024CS003,Vihaan Reddy,Computer Science,2,0
+2024CS004,Ananya Gupta,Computer Science,2,1
+2024CS005,Arjun Mehta,Computer Science,2,0
+2024EC001,Saanvi Krishnan,Electronics,2,1
+2024EC002,Aditya Joshi,Electronics,2,0
+2024EC003,Isha Verma,Electronics,2,1
+2024EC004,Reyansh Chauhan,Electronics,2,0
+2024EC005,Kavya Pillai,Electronics,2,1
+2024ME001,Rohan Singh,Mechanical,3,1
+2024ME002,Meera Iyer,Mechanical,3,0
+2024ME003,Kabir Sharma,Mechanical,3,1
+2024ME004,Tanvi Kulkarni,Mechanical,3,1
+2024ME005,Dhruv Agarwal,Mechanical,3,0
+2023CS001,Aarna Das,Computer Science,3,1
+2023CS002,Vivaan Saxena,Computer Science,3,0
+2023CS003,Riya Banerjee,Computer Science,3,1
+2023EC001,Sai Prasad,Electronics,3,1
+2023EC002,Nisha Tiwari,Electronics,3,0
+2023ME001,Karthik Menon,Mechanical,4,1
+2023ME002,Pooja Shetty,Mechanical,4,0
+2024CV001,Harsh Pandey,Civil,2,1
+2024CV002,Sneha Rajan,Civil,2,1
+2024CV003,Aakash Mishra,Civil,2,0
+2024EE001,Lakshmi Narayan,Electrical,2,1
+2024EE002,Pranav Deshmukh,Electrical,2,0
+2024EE003,Shruti Bhatt,Electrical,2,1
+2024IT001,Nikhil Mathur,Information Tech,2,1
+2024IT002,Divya Ranganathan,Information Tech,2,0
