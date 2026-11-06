@@ -89,8 +89,8 @@ $flashes     = get_flashes();
             <nav class="d-none d-md-flex align-items-center gap-3" aria-label="Primary Navigation">
                 <?php if (!$currentUser): ?>
                     <a href="<?= base_url() ?>" class="nav-link <?= ($activeNav ?? '') === 'home' ? 'active' : '' ?>">Home</a>
-                    <a href="<?= base_url('login.php') ?>" class="nav-link">Sign In</a>
-                    <a href="<?= base_url('register.php') ?>" class="nav-link">Register</a>
+                    <a href="<?= base_url('login.php?role=student') ?>" class="nav-link">Student Login</a>
+                    <a href="<?= base_url('login.php?role=staff') ?>" class="nav-link">Staff Login</a>
                 <?php else: ?>
                     <?php if ($currentUser['role'] === 'student'): ?>
                         <a href="<?= base_url('student/dashboard.php') ?>" class="nav-link <?= ($activeNav ?? '') === 'dashboard' ? 'active' : '' ?>">
@@ -138,9 +138,10 @@ $flashes     = get_flashes();
                 </button>
 
                 <?php if (!$currentUser): ?>
-                    <a href="<?= base_url('login.php') ?>" class="btn-solvex btn-ghost btn-sm">Log In</a>
+                    <a href="<?= base_url('login.php?role=student') ?>" class="btn-solvex btn-ghost btn-sm">Student Login</a>
+                    <a href="<?= base_url('login.php?role=staff') ?>" class="btn-solvex btn-secondary btn-sm">Staff Login</a>
                     <a href="<?= base_url('register.php') ?>" class="btn-solvex btn-primary btn-sm">
-                        <i class="bi bi-person-plus-fill"></i> Register
+                        <i class="bi bi-person-plus-fill me-1"></i> Register
                     </a>
                 <?php else: ?>
                     <!-- Notification Bell with Dropdown -->

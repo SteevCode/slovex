@@ -46,58 +46,77 @@ try {
 ?>
 
 <!-- ── Editorial Hero ──────────────────────────────────────── -->
-<section class="hero-section">
+<section class="hero-section py-5">
     <div class="container">
-        <div class="row align-items-center g-4">
-            <div class="col-lg-8">
-                <div class="d-inline-flex align-items-center gap-2 mb-3">
-                    <span class="ref-id text-uppercase" style="letter-spacing: 0.08em; font-size: 0.75rem;">Campus Records Ledger</span>
-                    <span class="text-secondary small">&bull; Institutional Incident Resolution</span>
-                </div>
-                
-                <h1 class="display-5 fw-bold mb-3">
-                    Campus Facilities &amp; Maintenance Ledger
-                </h1>
-                
-                <p class="hero-subtitle mb-4">
-                    Report infrastructure issues, track department dispatch, and verify resolution across hostels, academic blocks, and campus facilities.
-                </p>
-
-                <div class="hero-actions d-flex flex-wrap gap-2">
-                    <?php if ($currentUser): ?>
-                        <a href="<?= role_home($currentUser['role']) ?>" class="btn-solvex btn-primary">
-                            <?= icon('speedometer', 16) ?> Open <?= ucfirst(e($currentUser['role'])) ?> Portal
-                        </a>
-                    <?php else: ?>
-                        <a href="<?= base_url('student/report.php') ?>" class="btn-solvex btn-primary">
-                            <?= icon('plus', 16) ?> Report an Incident
-                        </a>
-                        <a href="<?= base_url('feed.php') ?>" class="btn-solvex btn-secondary">
-                            <?= icon('list', 16) ?> View Public Feed
-                        </a>
-                        <a href="<?= base_url('login.php') ?>" class="btn-solvex btn-ghost">
-                            <?= icon('log-in', 16) ?> Sign In
-                        </a>
-                    <?php endif; ?>
-                </div>
-            </div>
-
-            <div class="col-lg-4 d-none d-lg-block">
-                <div class="card-solvex p-3">
-                    <div class="d-flex align-items-center justify-content-between mb-2 pb-2 border-bottom">
-                        <span class="small text-uppercase fw-bold text-secondary">Campus Notice</span>
-                        <span class="badge bg-secondary-subtle">SLA Monitored</span>
-                    </div>
-                    <p class="small mb-2 text-secondary">
-                        Complaints filed here are routed directly to assigned department queues. Critical safety and security issues receive urgent priority.
-                    </p>
-                    <div class="d-flex align-items-center justify-content-between pt-2 border-top small text-secondary">
-                        <span>Emergency Helpline:</span>
-                        <strong class="text-danger"><?= e(EMERGENCY_CONTACT_PHONE) ?></strong>
-                    </div>
-                </div>
-            </div>
+        <div class="text-center mb-5" style="max-width: 640px; margin-left: auto; margin-right: auto;">
+            <span class="badge bg-primary-subtle text-primary border mb-2 text-uppercase">Hostel Management System</span>
+            <h1 class="display-6 fw-bold mb-2 text-dark">
+                Hostel Maintenance &amp; Complaint System
+            </h1>
+            <p class="text-secondary small mb-0">
+                Residential complaint reporting, warden triage, and maintenance tracking.
+            </p>
         </div>
+
+        <?php if ($currentUser): ?>
+            <div class="text-center">
+                <a href="<?= role_home($currentUser['role']) ?>" class="btn-solvex btn-primary py-2 px-4 fs-6">
+                    <i class="bi bi-speedometer2 me-1"></i> Open <?= ucfirst(e($currentUser['role'])) ?> Dashboard
+                </a>
+            </div>
+        <?php else: ?>
+            <!-- Dual Portal Entry Cards -->
+            <div class="row g-4 justify-content-center">
+                <!-- 1. Student Portal Card -->
+                <div class="col-md-5">
+                    <div class="card shadow-sm border h-100 p-4" style="border-top: 4px solid var(--clr-brand-accent) !important; border-radius: 6px;">
+                        <div class="d-flex align-items-center gap-3 mb-3">
+                            <div class="rounded-circle d-flex align-items-center justify-content-center" style="width: 46px; height: 46px; background: var(--clr-brand-accent); color: #fff;">
+                                <i class="bi bi-mortarboard fs-4"></i>
+                            </div>
+                            <div>
+                                <h2 class="h5 fw-bold text-dark mb-0">Student Portal</h2>
+                                <span class="text-secondary small">Hostel Residents</span>
+                            </div>
+                        </div>
+                        <p class="text-secondary small mb-4">
+                            Submit maintenance complaints for your hostel room, track status, and verify completed fixes.
+                        </p>
+                        <div class="d-flex gap-2 mt-auto">
+                            <a href="<?= base_url('login.php?role=student') ?>" class="btn-solvex btn-primary flex-fill text-center">
+                                <i class="bi bi-box-arrow-in-right me-1"></i> Student Login
+                            </a>
+                            <a href="<?= base_url('register.php') ?>" class="btn-solvex btn-secondary flex-fill text-center">
+                                <i class="bi bi-person-plus-fill me-1"></i> Register
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. Faculty / Staff Portal Card -->
+                <div class="col-md-5">
+                    <div class="card shadow-sm border h-100 p-4" style="border-top: 4px solid #14213D !important; border-radius: 6px;">
+                        <div class="d-flex align-items-center gap-3 mb-3">
+                            <div class="rounded-circle d-flex align-items-center justify-content-center" style="width: 46px; height: 46px; background: #14213D; color: #fff;">
+                                <i class="bi bi-shield-check fs-4"></i>
+                            </div>
+                            <div>
+                                <h2 class="h5 fw-bold text-dark mb-0">Faculty &amp; Staff Portal</h2>
+                                <span class="text-secondary small">Warden &amp; Maintenance</span>
+                            </div>
+                        </div>
+                        <p class="text-secondary small mb-4">
+                            Warden review, complaint assignment, priority triage, and technician work execution.
+                        </p>
+                        <div class="mt-auto">
+                            <a href="<?= base_url('login.php?role=staff') ?>" class="btn btn-dark w-100 py-2 fw-semibold text-center">
+                                <i class="bi bi-shield-lock-fill me-1"></i> Staff / Warden Login
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        <?php endif; ?>
     </div>
 </section>
 
