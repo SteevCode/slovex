@@ -820,7 +820,9 @@ a:hover {
 }
 
 /* Light Mode Status Pills */
+.status-pill.pending,
 .status-pill.submitted    { background: #F1F5F9; color: #1E293B; border-color: #CBD5E1; }
+.status-pill.pending::before,
 .status-pill.submitted::before { background: var(--clr-status-submitted); }
 
 .status-pill.assigned     { background: #EEF2FF; color: #312E81; border-color: #C7D2FE; }
@@ -852,6 +854,7 @@ a:hover {
 .status-pill.duplicate::before { background: var(--clr-status-duplicate); }
 
 /* Dark Mode Status Pill Contrast */
+[data-theme="dark"] .status-pill.pending,
 [data-theme="dark"] .status-pill.submitted    { background: #1E293B; color: #E2E8F0; border-color: #334155; }
 [data-theme="dark"] .status-pill.assigned     { background: #1E1B4B; color: #E0E7FF; border-color: #3730A3; }
 [data-theme="dark"] .status-pill.in_progress,

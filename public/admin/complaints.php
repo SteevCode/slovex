@@ -19,8 +19,6 @@ require_once SOLVEX_ROOT . '/includes/maintenance.php';
 init_session();
 require_role('admin');
 
-run_maintenance();
-
 $user = current_user();
 $pdo  = db();
 
@@ -145,6 +143,7 @@ require_once SOLVEX_ROOT . '/includes/header.php';
                 <div class="col-6 col-md-2">
                     <select class="form-select-solvex form-select-sm" name="status">
                         <option value="">Status: All</option>
+                        <option value="pending" <?= $status === 'pending' ? 'selected' : '' ?>>Pending</option>
                         <option value="submitted" <?= $status === 'submitted' ? 'selected' : '' ?>>Submitted</option>
                         <option value="assigned" <?= $status === 'assigned' ? 'selected' : '' ?>>Assigned</option>
                         <option value="in_progress" <?= $status === 'in_progress' ? 'selected' : '' ?>>In Progress</option>

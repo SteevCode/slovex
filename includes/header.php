@@ -22,18 +22,14 @@ $currentUser = current_user();
 $pageTitle   = $pageTitle ?? APP_NAME;
 $flashes     = get_flashes();
 
-// Run lazy maintenance rules for authenticated staff and admin users
-if ($currentUser && in_array($currentUser['role'], ['staff', 'admin'], true)) {
-    require_once SOLVEX_ROOT . '/includes/maintenance.php';
-    run_maintenance();
-}
+// Header initialization
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Solvex Report — Campus problem reporting, transparent resolution tracking, and civic accountability.">
+    <meta name="description" content="Solvex Report — Hostel Complaint and Maintenance Management System.">
     <meta name="theme-color" content="#0E9F8E">
     <title><?= e($pageTitle) ?> — Solvex Report</title>
 
@@ -45,7 +41,7 @@ if ($currentUser && in_array($currentUser['role'], ['staff', 'admin'], true)) {
     <!-- Open Graph / Meta -->
     <meta property="og:type" content="website">
     <meta property="og:title" content="<?= e($pageTitle) ?> — Solvex Report">
-    <meta property="og:description" content="See a problem? Report it. Track it. Get it solved. Real-time campus issue resolution.">
+    <meta property="og:description" content="Hostel problem reporting, warden triage, and maintenance tracking.">
     <meta property="og:image" content="<?= asset_url('img/og-image.png') ?>">
     <meta property="og:url" content="<?= e(base_url()) ?>">
 
@@ -93,51 +89,41 @@ if ($currentUser && in_array($currentUser['role'], ['staff', 'admin'], true)) {
             <nav class="d-none d-md-flex align-items-center gap-3" aria-label="Primary Navigation">
                 <?php if (!$currentUser): ?>
                     <a href="<?= base_url() ?>" class="nav-link <?= ($activeNav ?? '') === 'home' ? 'active' : '' ?>">Home</a>
-                    <a href="<?= base_url('feed.php') ?>" class="nav-link <?= ($activeNav ?? '') === 'feed' ? 'active' : '' ?>">Public Feed</a>
-                    <a href="<?= base_url('accountability.php') ?>" class="nav-link <?= ($activeNav ?? '') === 'accountability' ? 'active' : '' ?>">Accountability</a>
+                    <a href="<?= base_url('login.php') ?>" class="nav-link">Sign In</a>
+                    <a href="<?= base_url('register.php') ?>" class="nav-link">Register</a>
                 <?php else: ?>
                     <?php if ($currentUser['role'] === 'student'): ?>
                         <a href="<?= base_url('student/dashboard.php') ?>" class="nav-link <?= ($activeNav ?? '') === 'dashboard' ? 'active' : '' ?>">
                             <i class="bi bi-grid-fill me-1"></i> Dashboard
                         </a>
-                        <a href="<?= base_url('student/my_complaints.php') ?>" class="nav-link">
+                        <a href="<?= base_url('student/my_complaints.php') ?>" class="nav-link <?= ($activeNav ?? '') === 'complaints' ? 'active' : '' ?>">
                             <i class="bi bi-list-task me-1"></i> My Complaints
-                        </a>
-                        <a href="<?= base_url('feed.php') ?>" class="nav-link">
-                            <i class="bi bi-megaphone me-1"></i> Public Feed
                         </a>
                         <a href="<?= base_url('student/report.php') ?>" class="btn-solvex btn-primary btn-sm py-1 px-3">
                             <i class="bi bi-plus-lg me-1"></i> Report Issue
                         </a>
                     <?php elseif ($currentUser['role'] === 'staff'): ?>
                         <a href="<?= base_url('staff/queue.php') ?>" class="nav-link <?= ($activeNav ?? '') === 'queue' ? 'active' : '' ?>">
-                            <i class="bi bi-inbox-fill me-1"></i> Queue
+                            <i class="bi bi-inbox-fill me-1"></i> Assigned Work Queue
                         </a>
-                        <a href="<?= base_url('feed.php') ?>" class="nav-link">Public Feed</a>
                         <a href="<?= base_url('student/notifications.php') ?>" class="nav-link">
                             <i class="bi bi-bell me-1"></i> Notifications
                         </a>
                     <?php elseif ($currentUser['role'] === 'admin'): ?>
                         <a href="<?= base_url('admin/dashboard.php') ?>" class="nav-link <?= ($activeNav ?? '') === 'dashboard' ? 'active' : '' ?>">
-                            <i class="bi bi-speedometer2 me-1"></i> Overview
+                            <i class="bi bi-speedometer2 me-1"></i> Warden Overview
                         </a>
                         <a href="<?= base_url('admin/complaints.php') ?>" class="nav-link <?= ($activeNav ?? '') === 'complaints' ? 'active' : '' ?>">
-                            <i class="bi bi-list-task me-1"></i> Complaints
+                            <i class="bi bi-list-task me-1"></i> All Complaints
                         </a>
                         <a href="<?= base_url('admin/users.php') ?>" class="nav-link <?= ($activeNav ?? '') === 'users' ? 'active' : '' ?>">
-                            <i class="bi bi-people me-1"></i> Users
+                            <i class="bi bi-people me-1"></i> Users & Staff
                         </a>
                         <a href="<?= base_url('admin/master.php') ?>" class="nav-link <?= ($activeNav ?? '') === 'master' ? 'active' : '' ?>">
-                            <i class="bi bi-gear me-1"></i> Master Data
-                        </a>
-                        <a href="<?= base_url('admin/import.php') ?>" class="nav-link <?= ($activeNav ?? '') === 'import' ? 'active' : '' ?>">
-                            <i class="bi bi-file-earmark-arrow-up me-1"></i> Import
+                            <i class="bi bi-building-gear me-1"></i> Hostels & Categories
                         </a>
                         <a href="<?= base_url('admin/reports.php') ?>" class="nav-link <?= ($activeNav ?? '') === 'reports' ? 'active' : '' ?>">
-                            <i class="bi bi-download me-1"></i> Reports
-                        </a>
-                        <a href="<?= base_url('admin/accountability.php') ?>" class="nav-link <?= ($activeNav ?? '') === 'accountability' ? 'active' : '' ?>">
-                            <i class="bi bi-bar-chart me-1"></i> Accountability
+                            <i class="bi bi-bar-chart me-1"></i> Reports
                         </a>
                     <?php endif; ?>
                 <?php endif; ?>

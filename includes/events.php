@@ -28,25 +28,28 @@ require_once SOLVEX_ROOT . '/includes/helpers.php';
  */
 function get_transition_matrix(): array
 {
-    return [
-        'submitted' => [
-            'assigned' => [
-                'roles'          => ['staff', 'admin'],
-                'require_reason' => false,
-            ],
-            'in_progress' => [
-                'roles'          => ['staff', 'admin'],
-                'require_reason' => false,
-            ],
-            'rejected' => [
-                'roles'          => ['staff', 'admin'],
-                'require_reason' => true,
-            ],
-            'duplicate' => [
-                'roles'          => ['staff', 'admin'],
-                'require_reason' => true,
-            ],
+    $pendingTransitions = [
+        'assigned' => [
+            'roles'          => ['staff', 'admin'],
+            'require_reason' => false,
         ],
+        'in_progress' => [
+            'roles'          => ['staff', 'admin'],
+            'require_reason' => false,
+        ],
+        'rejected' => [
+            'roles'          => ['staff', 'admin'],
+            'require_reason' => true,
+        ],
+        'duplicate' => [
+            'roles'          => ['staff', 'admin'],
+            'require_reason' => true,
+        ],
+    ];
+
+    return [
+        'pending'   => $pendingTransitions,
+        'submitted' => $pendingTransitions,
         'assigned' => [
             'in_progress' => [
                 'roles'          => ['staff', 'admin'],

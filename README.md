@@ -1,69 +1,73 @@
-# Solvex Report — Campus Incident Resolution System
+# Solvex Report — Hostel Complaint and Maintenance Management System
 
-Solvex Report is an accessible, civic campus problem reporting, department triage, and accountability system engineered for colleges and university hostel environments. Built on native PHP 8.2+ and MariaDB/MySQL, it operates with zero runtime framework dependencies, zero background daemon/cron requirements, and strict multi-role permission boundaries.
-
----
-
-## 🌟 Key Capabilities
-
-### 1. 3-Step Guided Student Intake
-- **Visual Category Cards:** Clear SLA targets, public/private sensitivity badges, and emergency safety banners.
-- **Cascading Location Selectors:** Drill down from Campus/Hostel &rarr; Building &rarr; Floor &rarr; Specific Room, with optional Geolocation API GPS capture.
-- **Automated Duplicate Detection:** Proactively surfaces similar open complaints from the preceding 14 days and allows students to click *"I am also affected"* instead of filing redundant tickets.
-- **Sanitized Media Uploads:** Strips GPS and EXIF metadata through GD re-encoding and validates magic bytes to prevent arbitrary code execution.
-- **Resolution Verification:** Students personally confirm resolution (*"Accept Resolution"* to close, or *"Still Broken"* to reopen with mandatory justification).
-
-### 2. Zendesk/Jira-Style Staff Resolution Queue
-- **Department Queue Triage:** Filter by status, priority, category, date, unassigned, and overdue SLA violations.
-- **Confidential Internal Notes:** Post staff-only internal discussions completely hidden from students and public JSON feeds.
-- **SLA Violation Tracking:** Visual ageing counters and days-open indicators calculate active response times with automatic freeze on resolved records.
-- **Strict Transition Engine:** Optimistic concurrency locks (`UPDATE ... WHERE id=? AND status=?`) prevent race conditions during triage.
-
-### 3. Administrator Control Center
-- **Stripe-Style Metric Cards & Analytics:** Live intake vs. resolution trends and category distributions.
-- **Master Data Configuration:** Full CRUD for campus categories, SLA target days, departments, and location trees with non-destructive soft-disables.
-- **Student Master Registry CSV Import:** Validates registry rows before upserting into the student directory.
-- **Accountability Leaderboard:** Public transparent ranking of longest unresolved campus issues with department reopen rates.
-- **Audit Logging:** Append-only ledger recording every user and master data mutation.
-
-### 4. Zero-Cron Lazy Maintenance Engine
-- Background maintenance automatically runs during staff and admin page loads, protected by 60-second atomic locks.
-- Automatically closes resolved tickets after 5 days with `closed_by = 'auto'`.
-- Flags overdue on-hold tickets without requiring system cron access or shell daemon processes.
+An accessible, reliable, and high-contrast **Hostel Complaint and Maintenance Management System** built with native **PHP 8.2+**, **MySQL / MariaDB**, **Bootstrap 5**, and vanilla **JavaScript**. Designed for college and university hostel administration as an MCA micro project.
 
 ---
 
-## 🚀 Quick Start (Plug & Play Universal Launchers)
+## 🏢 Project Overview
 
-Solvex Report is completely self-contained and portable across Windows, macOS, and Linux. Choose your preferred launcher:
+Solvex Report streamlines the maintenance and repair operations of campus hostels. It replaces chaotic WhatsApp groups and paper logbooks with a transparent, role-based workflow:
 
-### 1. Cross-Platform Python Launcher (Universal)
-```bash
-python run.py
 ```
-*Detects operating system, locates PHP binary, boots MySQL if offline, verifies 6-point environment health, runs database migrations and seeds, and opens the application in your default browser.*
-
-### 2. Windows Batch or PowerShell
-Double-click `run.bat` or run in terminal:
-```cmd
-run.bat
-```
-*Or via PowerShell:*
-```powershell
-.\run.ps1
+[Student Reports Hostel Problem]
+            │
+            ▼
+[Warden Reviews & Assigns Maintenance Staff]
+            │
+            ▼
+[Maintenance Staff Updates Progress & Resolves]
+            │
+            ▼
+[Student Verifies Fix & Confirms Closure]
+     (or reopens if problem persists)
 ```
 
-### 3. Linux / macOS Shell Script
-```bash
-chmod +x run.sh
-./run.sh
-```
+### Key Principles
+- **No External Framework Bloat:** Pure native PHP 8+ and PDO with zero runtime composer dependencies.
+- **Strict Privacy & Isolation:** Students only view their private complaints; staff view assigned complaints; warden oversees all.
+- **High-Contrast Design System:** WCAG AA compliant light and dark modes with clear typography and zero distracting slogans.
+- **Immutable Audit Trail:** Append-only event ledger tracking every status transition and remark.
 
-### 4. Containerized 1-Command Setup (Docker)
-```bash
-docker compose up -d
-```
-Access at: **[http://localhost:8000](http://localhost:8000)**
+---
+
+## 👥 Three User Roles
+
+### 1. Student
+- Register with university register number and log in.
+- Set and update hostel building and room number in profile.
+- Submit hostel maintenance requests across the 6 standard categories.
+- Track real-time repair status, staff remarks, and timeline.
+- Verify resolution: **"Confirm Fix"** to close, or **"Still Broken"** to reopen with details.
+- Manage profile and change password securely.
+
+### 2. Warden (Administrator)
+- Full overview dashboard with open, pending, in-progress, overdue, and resolved metrics.
+- Triage intake: filter complaints by category, hostel building, priority, and date.
+- Assign complaints to responsible maintenance staff technicians.
+- Adjust priorities (`low`, `medium`, `high`, `critical`).
+- Manage student accounts and maintenance staff logins (enable/disable without deleting history).
+- Manage hostel blocks, floors, rooms, and complaint categories with SLA targets.
+- Generate and download filtered complaint reports.
+
+### 3. Maintenance Staff
+- Log in to dedicated assigned work queue (`/staff/queue.php`).
+- View room location, student contact info, and attached photos.
+- Update ticket status: `in_progress` &rarr; `resolved`.
+- Enter work completion remarks and part replacement details.
+- View personal history of completed maintenance tasks.
+
+---
+
+## 🔧 The 6 Standard Hostel Categories
+
+| ID | Category Name | Default SLA Target | Department |
+|---|---|---|---|
+| **1** | **Plumbing and Water Supply** | 2 Days | Maintenance & Civil |
+| **2** | **Electrical Problems** | 1 Day | Electrical Works |
+| **3** | **Cleaning and Sanitation** | 1 Day | Maintenance & Civil |
+| **4** | **Room and Furniture Maintenance** | 3 Days | Maintenance & Civil |
+| **5** | **Wi-Fi and Internet** | 2 Days | IT & Network Services |
+| **6** | **Mess and Food Facilities** | 1 Day | Mess Administration |
 
 ---
 
@@ -72,109 +76,125 @@ Access at: **[http://localhost:8000](http://localhost:8000)**
 | Role | Email | Password | Identifier | Default Dashboard |
 |---|---|---|---|---|
 | **Student** | `student@solvex.edu` | `Student@123` | `2024CS100` | `/student/dashboard.php` |
-| **Staff (Maintenance)** | `staff@solvex.edu` | `Staff@123` | `STF001` | `/staff/queue.php` |
-| **Super Administrator** | `admin@solvex.edu` | `Admin@123` | `ADM001` | `/admin/dashboard.php` |
+| **Maintenance Staff** | `staff@solvex.edu` | `Staff@123` | `STF001` | `/staff/queue.php` |
+| **Hostel Warden (Admin)** | `admin@solvex.edu` | `Admin@123` | `ADM001` | `/admin/dashboard.php` |
 
 ---
 
-## 🎨 Design System: "Quiet Public-Records Office"
+## 🚀 Quick Start (Running Locally with XAMPP)
 
-Solvex Report employs an editorial, information-first design system inspired by civic ledgers and modern issue trackers:
-- **Surface Hierarchy:** Flat surfaces separated by crisp 1px hairlines (`--clr-border: #E2DFD6`), replacing heavy shadows and decorative gradients.
-- **Color as Information:** Neutral warm paper base (`#F7F6F2`), civic teal accent (`#0E9F8E`), and semantic colors reserved strictly for functional ticket statuses.
-- **Tabular Figures:** Numbers, counts, and reference identifiers (`SVX-YYYY-NNNNN`) formatted with tabular spacing and monospace fonts for effortless scanning.
-- **Dark Mode Support:** Native light and dark themes with persistent `localStorage` preference and zero-flicker pre-render initialization.
-- **WCAG 2.2 AA Compliance:** High-contrast color ratios, visible focus outlines, and full support for `prefers-reduced-motion` and `forced-colors`.
-- **Living Styleguide:** Gated catalog available at `/styleguide.php` in local development mode.
+### Prerequisites
+- **XAMPP** (Apache, MySQL / MariaDB, PHP 8.2+)
+- Web browser (Chrome, Firefox, Edge)
+
+### Option A: Direct Master Run Script
+In PowerShell from the project root:
+```powershell
+.\run.ps1
+```
+*Or double-click `run.bat` on Windows.*
+
+### Option B: PHP Built-in Server
+1. Start MySQL from XAMPP Control Panel.
+2. Ensure database `solvex_report` is imported (`database/migrate_hostel.sql`).
+3. Run PHP development server:
+```powershell
+& "C:\xampp\php\php.exe" -S 127.0.0.1:8000 router.php
+```
+4. Open your browser and navigate to: **[http://127.0.0.1:8000](http://127.0.0.1:8000)**
 
 ---
 
-## 🧪 Automated Test Suite & Security Verification
+## 🧪 Automated Testing & Verification
 
-All application features and security controls are validated by an automated test harness:
+Run the master test runner to verify 100% test coverage across all hostel workflows:
 
 ```powershell
 & "C:\xampp\php\php.exe" tests/run.php
 ```
 
+### Dedicated Hostel Lifecycle Test
+```powershell
+& "C:\xampp\php\php.exe" tests/hostel_lifecycle_test.php
 ```
-═══════════════════════════════════════════════════════════════════════
-   TEST HARNESS RESULTS: 38 PASSED / 38 TOTAL (0 FAILURES)
-═══════════════════════════════════════════════════════════════════════
-```
+*Verifies role isolation, 5-stage status transition matrix, student confirmation, reopen workflow, and append-only audit trail.*
 
 ### Static Security Linter
-Verify zero XSS escaping gaps, direct SQL concatenations, or CSRF bypasses across all 46 codebase endpoints:
 ```powershell
 & "C:\xampp\php\php.exe" scripts/lint_security.php
 ```
+*Verifies zero XSS, CSRF, or SQL injection vectors across all PHP files.*
 
----***
+---
 
-## 📁 Project Directory Structure
+## 📂 Project Directory Structure
 
 ```
 Solvex Report/
-├── config.local.example.php    # Configuration template
-├── config.local.php            # Active database & credentials (git-ignored)
-├── database/
-│   ├── schema.sql              # Core database schema (InnoDB, utf8mb4)
-│   ├── seed.sql                # Default departments, categories & locations
-│   ├── migrate_phase2.sql      # Performance indexes & complaint extensions
-│   ├── migrate_phase3.sql      # Admin logs & settings table
-│   └── demo_seed.php           # Realistic demo dataset generator (--reset)
-├── docs/
-│   ├── ARCHITECTURE.md         # System technical design & permissions model
-│   ├── DESIGN.md               # Design tokens, typography & component library
-│   ├── DEPLOYMENT.md           # Production & XAMPP deployment guidelines
-│   ├── USER_GUIDE.md           # Role-based walkthroughs (Student, Staff, Admin)
-│   ├── SECURITY_AUDIT.md       # Complete vulnerability & hardening checklist
-│   ├── DECISIONS.md            # Architectural decisions log
-│   ├── FUTURE_WORK.md          # Feature roadmap & planned enhancements
-│   └── screens/                # Screenshots at 1280px, 768px, and 360px
-├── includes/
-│   ├── auth.php                # Authentication, sessions, & role guards
-│   ├── config.php              # Global configuration & security headers
-│   ├── csrf.php                # Synchronizer CSRF tokens (session-persistent)
-│   ├── db.php                  # PDO database singleton (non-emulated prepares)
-│   ├── events.php              # Complaint lifecycle engine & audit trail
-│   ├── helpers.php             # XSS escaping, safe input & date calculations
-│   ├── ui.php                  # Shared UI components (icon, tags, stat blocks)
-│   ├── header.php / footer.php # Responsive application layout shells
-│   ├── maintenance.php         # Lazy cron-free maintenance engine
-│   ├── permissions.php         # Anonymity & visibility authorization checks
-│   └── upload.php              # Magic byte validation & GD EXIF stripper
-├── public/
-│   ├── admin/                  # Overview, complaints, users, master, import, reports
-│   ├── staff/                  # Queue triage & single incident workspace
-│   ├── student/                # Dashboard, 3-step report wizard, my complaints, profile
-│   ├── api/                    # JSON endpoints (locations, similar, affected, comments)
-│   ├── assets/                 # CSS design system (solvex.css), JS, and WebP icons
-│   ├── errors/                 # Hardened 403, 404, 500 error templates
-│   ├── styleguide.php          # Living design system catalog (local dev only)
-│   └── index.php               # Civic landing page with live incident ledger
-├── storage/                    # Sanitized uploads & error logs (secured outside web root)
-└── tests/
-    ├── phase2_tests.php        # Student flow & intake test suite
-    ├── phase3_tests.php        # Staff queue & admin operations suite
-    ├── remediation_tests.php   # Security audit regression checks
-    └── run.php                 # Master CLI test runner (38/38 tests pass)
+├── config.local.php             # Database credentials & local environment settings
+├── router.php                   # Built-in server router with MIME streaming
+├── run.bat / run.ps1            # 1-click startup scripts
+│
+├── public/                      # Web root
+│   ├── index.php                # High-contrast landing page
+│   ├── login.php                # Authentication entry
+│   ├── register.php             # Student self-registration
+│   ├── complaint.php            # Single complaint timeline & student confirmation
+│   ├── assets/
+│   │   ├── css/solvex.css       # High-contrast design system (light/dark)
+│   │   └── js/solvex.js         # Theme toggle & UI helpers
+│   ├── student/                 # Student Portal
+│   │   ├── dashboard.php        # Metric cards & recent complaints
+│   │   ├── report.php           # 1-page hostel maintenance intake form
+│   │   ├── my_complaints.php    # Student's private complaint list
+│   │   └── profile.php          # Hostel/room settings & password change
+│   ├── staff/                   # Maintenance Staff Portal
+│   │   ├── queue.php            # Assigned ticket queue
+│   │   └── complaint.php        # Work execution, remarks & resolution
+│   └── admin/                   # Hostel Warden Portal
+│       ├── dashboard.php        # Executive overview & overdue alerts
+│       ├── complaints.php       # All complaints triage & staff assignment
+│       ├── users.php            # Student & staff account management
+│       ├── master.php           # Hostels, floors, rooms & categories CRUD
+│       └── reports.php          # CSV data export
+│
+├── includes/                    # Backend core logic
+│   ├── config.php               # System constants
+│   ├── db.php                   # PDO database singleton
+│   ├── auth.php                 # Session & role validation
+│   ├── permissions.php          # Multi-role access control rules
+│   ├── events.php               # State transition matrix & append-only events
+│   ├── helpers.php              # Sanitization & escaping (e())
+│   ├── csrf.php                 # Token generation and validation
+│   └── upload.php               # Photo validation & EXIF metadata stripping
+│
+├── database/                    # SQL schema & migrations
+│   ├── schema.sql               # Base database schema
+│   ├── seed.sql                 # Initial seed records
+│   ├── migrate_hostel.sql       # Hostel domain migration
+│   └── backup_pre_hostel.sql    # Full verified database backup
+│
+└── tests/                       # Automated test harness
+    ├── run.php                  # Master test runner (all suites)
+    ├── hostel_lifecycle_test.php# Hostel 5-stage lifecycle tests
+    ├── phase2_tests.php         # Student flow & permissions
+    └── phase3_tests.php         # Staff & admin concurrency tests
 ```
 
 ---
 
-## 🔒 Security Architecture Highlights
+## 🛡️ Security Architecture
 
-- **SQL Injection Prevention:** 100% prepared statements with parameterized binds; zero string concatenation. Non-emulated PDO prepares enforce DBMS-level parsing.
-- **Cross-Site Scripting (XSS):** Universal `e()` helper wrapping `htmlspecialchars(..., ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8')` for dynamic output.
-- **Cross-Site Request Forgery (CSRF):** Synchronizer tokens validated via `hash_equals()`; persistent session tokens prevent multi-tab invalidation.
-- **Role-Based Route Guards:** Server-side enforcement (`require_role('student')`, `require_role('staff')`, `require_role('admin')`).
-- **Department Boundary Isolation:** Staff can only view and update tickets belonging to their assigned department. Non-authorized access returns HTTP 404 to prevent resource enumeration.
-- **Reporter Anonymity & GPS Protection:** Public views sanitize reporter identity to `"Anonymous student"` and suppress GPS and room details for peers.
-- **Append-Only Audit Trail:** `complaint_events` and `admin_log` records cannot be updated or deleted by any application role.
+1. **Prepared Statements Everywhere:** 100% of SQL queries use PDO parameter binding with zero string concatenation.
+2. **Context-Aware Escaping:** Every dynamic output rendered through `e()` defusing XSS attacks.
+3. **Session Hardening:** `Strict` SameSite cookie flags, `HttpOnly`, and cryptographically secure CSRF tokens on all POST requests.
+4. **Media Sanitization:** Images re-encoded via GD to remove EXIF GPS data and neutralize embedded script payloads.
+5. **Rate Limiting:** Maximum 5 complaint submissions per student per day to prevent spam.
+6. **Optimistic Concurrency:** State transitions use `UPDATE ... WHERE id = ? AND status = ?` to prevent race conditions.
 
 ---
 
-## 📄 License & Institutional Use
-
-Solvex Report is built for campus infrastructure accountability and student welfare. Designed for easy deployment across college servers, shared hosting, and self-hosted institutional environments.
+## 📄 Academic Project Details
+- **Project Type:** MCA Micro Project
+- **Application:** Hostel Complaint and Maintenance Management System
+- **Technologies:** PHP 8.2+, MySQL / MariaDB, Bootstrap 5, Vanilla JavaScript, CSS3

@@ -69,6 +69,10 @@ foreach ($results as $r) {
     ];
 }
 
+// ── 2.5. EXECUTE HOSTEL LIFECYCLE TESTS ─────────────────────────────
+echo "\n>>> SECTION 2.5: HOSTEL MANAGEMENT LIFECYCLE & 3 ROLES\n";
+include SOLVEX_ROOT . '/tests/hostel_lifecycle_test.php';
+
 // ── 3. EXHAUSTIVE PERMISSION MATRIX ─────────────────────────────────
 echo "\n>>> SECTION 3: EXHAUSTIVE PERMISSION MATRIX (ROLES x VISIBILITY)\n";
 

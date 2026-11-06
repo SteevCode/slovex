@@ -26,7 +26,7 @@ $pdo    = db();
 // 1. Fetch Student Metrics
 $statsStmt = $pdo->prepare('
     SELECT
-        COUNT(CASE WHEN status IN (\'submitted\', \'assigned\', \'reopened\') THEN 1 END) AS count_open,
+        COUNT(CASE WHEN status IN (\'pending\', \'submitted\', \'assigned\', \'reopened\') THEN 1 END) AS count_open,
         COUNT(CASE WHEN status IN (\'in_progress\', \'on_hold\') THEN 1 END) AS count_in_progress,
         COUNT(CASE WHEN status = \'resolved\' THEN 1 END) AS count_action_needed,
         COUNT(CASE WHEN status = \'closed\' THEN 1 END) AS count_closed

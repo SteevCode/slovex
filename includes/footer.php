@@ -21,11 +21,11 @@
                 <div class="col-lg-4 col-md-6">
                     <img src="<?= asset_url('img/logo-with-text.png') ?>" alt="Solvex Report" height="34" class="mb-3">
                     <p class="text-secondary small mb-3">
-                        Campus problem reporting, department triage, and transparent resolution tracking for hostel and academic facilities.
+                        Hostel problem reporting, warden triage, and maintenance tracking for student accommodation and common amenities.
                     </p>
                     <div class="d-flex align-items-center gap-2 text-secondary small">
                         <span class="ref-id">SVX-YYYY-NNNNN</span>
-                        <span>Civic Incident Tracking</span>
+                        <span>Hostel Maintenance System</span>
                     </div>
                 </div>
 
@@ -33,35 +33,35 @@
                 <div class="col-lg-2 col-md-3 col-6">
                     <h5>Navigation</h5>
                     <ul class="list-unstyled small d-flex flex-column gap-2 mb-0">
-                        <li><a href="<?= base_url() ?>">Home Ledger</a></li>
-                        <li><a href="<?= base_url('feed.php') ?>">Public Feed</a></li>
-                        <li><a href="<?= base_url('accountability.php') ?>">Accountability</a></li>
+                        <li><a href="<?= base_url() ?>">Home</a></li>
                         <li><a href="<?= base_url('login.php') ?>">Sign In</a></li>
                         <li><a href="<?= base_url('register.php') ?>">Student Registration</a></li>
+                        <li><a href="<?= base_url('student/my_complaints.php') ?>">My Complaints</a></li>
                     </ul>
                 </div>
 
                 <!-- Departments Handled -->
                 <div class="col-lg-3 col-md-3 col-6">
-                    <h5>Departments</h5>
+                    <h5>Categories</h5>
                     <ul class="list-unstyled small d-flex flex-column gap-2 mb-0">
-                        <li><span class="text-secondary"><i class="bi bi-wrench me-1"></i> Maintenance & Civil</span></li>
-                        <li><span class="text-secondary"><i class="bi bi-lightning-charge me-1"></i> Electrical Works</span></li>
-                        <li><span class="text-secondary"><i class="bi bi-wifi me-1"></i> IT & Network Services</span></li>
-                        <li><span class="text-secondary"><i class="bi bi-cup-hot me-1"></i> Mess Administration</span></li>
-                        <li><span class="text-secondary"><i class="bi bi-shield-check me-1"></i> Hostel Warden & Security</span></li>
+                        <li><span class="text-secondary"><i class="bi bi-droplet me-1"></i> Plumbing & Water Supply</span></li>
+                        <li><span class="text-secondary"><i class="bi bi-lightning me-1"></i> Electrical Problems</span></li>
+                        <li><span class="text-secondary"><i class="bi bi-trash3 me-1"></i> Cleaning & Sanitation</span></li>
+                        <li><span class="text-secondary"><i class="bi bi-door-closed me-1"></i> Room & Furniture</span></li>
+                        <li><span class="text-secondary"><i class="bi bi-wifi me-1"></i> Wi-Fi & Internet</span></li>
+                        <li><span class="text-secondary"><i class="bi bi-egg-fried me-1"></i> Mess & Food Facilities</span></li>
                     </ul>
                 </div>
 
                 <!-- Student & Campus Help -->
                 <div class="col-lg-3 col-md-12">
-                    <h5>Campus Helpdesk</h5>
+                    <h5>Hostel Administration</h5>
                     <p class="text-secondary small mb-2">
-                        Need assistance setting up your student profile or finding your register number?
+                        Need assistance with room allocation or registration? Contact the chief warden's office.
                     </p>
                     <div class="small text-secondary mb-3">
-                        <div><i class="bi bi-envelope me-1 text-primary"></i> helpdesk@solvexreport.edu</div>
-                        <div><i class="bi bi-geo-alt me-1 text-primary"></i> Student Affairs, Admin Block, Floor 1</div>
+                        <div><i class="bi bi-envelope me-1 text-primary"></i> warden@solvexreport.edu</div>
+                        <div><i class="bi bi-building me-1 text-primary"></i> Central Warden Office, Block A Ground Floor</div>
                     </div>
                     <div class="small text-muted">
                         Operating Hours: 24×7 Automated Intake

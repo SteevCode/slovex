@@ -24,8 +24,32 @@ $smStmt = $pdo->prepare('SELECT full_name, department, year, hosteller FROM stud
 $smStmt->execute([$user['register_no']]);
 $studentMaster = $smStmt->fetch();
 
+// Fetch hostels
+$hostels = $pdo->query("SELECT id, name FROM locations WHERE parent_id IS NULL OR type = 'hostel' ORDER BY name ASC")->fetchAll();
+
 $error   = null;
 $success = null;
+
+if (is_post() && post('action') === 'update_hostel') {
+    csrf_verify();
+
+    $hostelId = (int) post('hostel_id');
+    $roomNo   = trim(post('room_no'));
+
+    if ($hostelId <= 0) {
+        $error = 'Please select your hostel building.';
+    } elseif (empty($roomNo) || mb_strlen($roomNo) > 30) {
+        $error = 'Room number is required (max 30 characters).';
+    } else {
+        $upd = $pdo->prepare('UPDATE users SET hostel_id = ?, room_no = ? WHERE id = ?');
+        $upd->execute([$hostelId, $roomNo, $userId]);
+        $user['hostel_id'] = $hostelId;
+        $user['room_no']   = $roomNo;
+        $_SESSION['user_hostel_id'] = $hostelId;
+        $_SESSION['user_room_no']   = $roomNo;
+        $success = 'Your hostel room details have been updated!';
+    }
+}
 
 if (is_post() && post('action') === 'change_password') {
     csrf_verify();
@@ -126,6 +150,41 @@ require_once SOLVEX_ROOT . '/includes/header.php';
                             </div>
                         </div>
                     </div>
+                </div>
+            </div>
+
+            <!-- Hostel Accommodation Details -->
+            <div class="card-solvex border-0 shadow-sm mb-4">
+                <div class="card-header bg-white border-bottom p-4">
+                    <h5 class="fw-bold text-navy mb-0"><i class="bi bi-building-check me-2 text-primary"></i> Hostel Accommodation</h5>
+                </div>
+                <div class="card-body p-4">
+                    <form method="POST" action="<?= base_url('student/profile.php') ?>">
+                        <?= csrf_field() ?>
+                        <input type="hidden" name="action" value="update_hostel">
+
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label for="hostel_id" class="form-label-solvex">Hostel Building <span class="text-danger">*</span></label>
+                                <select name="hostel_id" id="hostel_id" class="form-select-solvex" required>
+                                    <option value="">-- Select Hostel --</option>
+                                    <?php foreach ($hostels as $h): ?>
+                                        <option value="<?= (int)$h['id'] ?>" <?= ((int)($user['hostel_id'] ?? 0) === (int)$h['id']) ? 'selected' : '' ?>>
+                                            <?= e($h['name']) ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="room_no" class="form-label-solvex">Room Number <span class="text-danger">*</span></label>
+                                <input type="text" name="room_no" id="room_no" class="form-control-solvex" value="<?= e($user['room_no'] ?? '') ?>" placeholder="e.g. A-204" required maxlength="30">
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn-solvex btn-secondary py-2 px-4">
+                            <i class="bi bi-save me-1"></i> Save Hostel Details
+                        </button>
+                    </form>
                 </div>
             </div>
 

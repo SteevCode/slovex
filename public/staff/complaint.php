@@ -26,8 +26,6 @@ require_once SOLVEX_ROOT . '/includes/maintenance.php';
 init_session();
 require_role('staff', 'admin');
 
-run_maintenance();
-
 $user = current_user();
 $userId = (int) $user['id'];
 $userRole = $user['role'];

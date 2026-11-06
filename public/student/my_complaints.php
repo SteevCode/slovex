@@ -49,7 +49,7 @@ $params = ['student_id' => $userId];
 
 // Status Tab filter
 if ($statusTab === 'open') {
-    $sql .= " AND c.status IN ('submitted', 'assigned')";
+    $sql .= " AND c.status IN ('pending', 'submitted', 'assigned')";
 } elseif ($statusTab === 'in_progress') {
     $sql .= " AND c.status IN ('in_progress', 'on_hold', 'reopened')";
 } elseif ($statusTab === 'resolved') {

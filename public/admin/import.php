@@ -20,8 +20,6 @@ require_once SOLVEX_ROOT . '/includes/maintenance.php';
 init_session();
 require_role('admin');
 
-run_maintenance();
-
 $user = current_user();
 $pdo  = db();
 

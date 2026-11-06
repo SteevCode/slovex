@@ -1,110 +1,130 @@
-# Solvex Report — Comprehensive User Guide
+# Solvex Report — Hostel Management System User Guide
 
-Solvex Report is an institutional problem reporting, department triage, and civic accountability platform built for college campuses and hostel facilities. This guide walks students, staff members, and system administrators through their respective roles.
+Solvex Report is a hostel complaint and maintenance management application for college students, hostel wardens, and maintenance technicians. This guide details the complete operation for each of the three user roles.
 
 ---
 
 ## 1. Student Portal (`/student/dashboard.php`)
 
-### Overview & Account Registration
-1. **Pre-Authorized Registry:** Registration requires a valid University Register Number found in the institution's `student_master` database.
-2. **Email Verification:** A single-use activation link is dispatched upon registration. Once confirmed, you can log in using your student email or register number.
+### Registration & Profile Setup
+1. **Student Registration (`/register.php`):**
+   - Register with your university Register Number, university email, and a secure password (minimum 8 characters).
+   - Click the verification link sent to your email to activate your account.
+2. **Room Allocation Setup (`/student/profile.php`):**
+   - Log in and navigate to **Profile**.
+   - Select your **Hostel Building** (e.g. Boys Hostel Block A, Boys Hostel Block B, Girls Hostel).
+   - Enter your assigned **Room Number** (e.g. `A-204`).
+   - Click **Save Hostel Details**. This information will automatically link to all future maintenance requests.
 
-### Step-by-Step Problem Intake (`/student/report.php`)
+### Submitting a Maintenance Complaint (`/student/report.php`)
+The hostel intake form is a streamlined single-page form:
+1. **Category Selection:** Choose from the 6 standard categories:
+   - Plumbing and Water Supply
+   - Electrical Problems
+   - Cleaning and Sanitation
+   - Room and Furniture Maintenance
+   - Wi-Fi and Internet
+   - Mess and Food Facilities
+2. **Hostel Location & Room:**
+   - Your registered room is pre-selected by default.
+   - For issues in shared facilities (Dining Hall, Common Washroom, Reading Room), select the specific area from the dropdown.
+3. **Priority:**
+   - `Low`: Routine wear and tear.
+   - `Medium`: Normal repair (Standard 48-hour SLA).
+   - `High`: Significant disruption (no power, running water leak).
+   - `Critical`: Urgent safety hazard or major flooding.
+4. **Problem Title & Description:**
+   - Enter a concise title (e.g. "Ceiling fan speed regulator broken").
+   - Detail the problem in up to 1500 characters.
+5. **Photos (Optional):** Attach up to 2 images (JPG, PNG, WebP up to 5MB each).
+6. **Submit:** Your ticket reference (`SVX-YYYY-NNNNN`) is generated instantly with status `pending`.
 
-The reporting wizard is structured into three clear stages:
-
-#### Step 1: WHAT (Problem Category)
-- Select the applicable issue category from the visual ledger (e.g., Plumbing, Civil, Electrical, Wi-Fi, Food Quality).
-- Each category card clearly displays its standard **SLA target resolution time** (e.g., 24 hours, 2 days, 3 days).
-- Urgent safety hazards (e.g. Electrical sparks, Harassment) trigger immediate emergency contact call banners.
-
-#### Step 2: WHERE (Campus Location & GPS)
-- **Cascading Selectors:** Pick Campus/Hostel &rarr; Building &rarr; Floor &rarr; Specific Room/Lab.
-- **Geolocation:** Click *"Use My Current Location"* to capture precise GPS latitude and longitude (automatically sanitized for peer privacy).
-
-#### Step 3: DETAILS (Description & Photos)
-- **Title & Description:** Enter a brief title and a detailed description (live 1500-character counter).
-- **Photo Uploads:** Drag and drop up to 3 JPG, PNG, or WebP images. The upload pipeline automatically strips GPS, camera, and device metadata before storage.
-- **Duplicate Prevention:** Solvex automatically scans open complaints filed within the preceding 14 days in the same location. If a match is detected, you can click *"I am also affected"* instead of filing a duplicate report.
-- **Visibility Toggle:** Choose between **Public** (visible anonymously on campus feed) or **Private** (restricted to you and department staff).
-
-### Tracking & Confirming Resolution
-- **My Complaints (`/student/my_complaints.php`):** View all submitted tickets, filter by status, and inspect real-time audit event timelines.
-- **Accepting Resolution:** When staff marks work completed, the ticket enters `resolved` status. The student can click:
-  - **"Accept Resolution":** Confirms satisfactory completion and permanently closes the ticket (`closed_by = 'student'`).
-  - **"Still Broken":** Reopens the ticket with a required explanation note for department review.
-
----
-
-## 2. Staff Resolution Queue (`/staff/queue.php`)
-
-Department staff members (Maintenance, Electrical, IT, Mess Administration, Hostel Warden, Security) are restricted to tickets belonging strictly to their assigned department.
-
-### Queue Triage & Filtering
-- **Quick Filters:** Filter by *Unassigned*, *Assigned to Me*, *Overdue SLA*, or *On Hold*.
-- **Search & Filter Bar:** Instant search by reference ID (`SVX-YYYY-NNNNN`), keyword, priority, and date range.
-- **Civic Ageing Chips:** Color-coded clock chips highlight tickets approaching or exceeding SLA targets.
-
-### Ticket Workspace (`/staff/complaint.php?id=X`)
-- **Self-Assignment:** Claim unassigned complaints or reassign them to team colleagues.
-- **Status Progression:**
-  - **In Progress:** Mark that technicians have started physical work.
-  - **On Hold:** Temporarily pause work pending spare parts or scheduled vendor visits (requires mandatory future hold date and reason).
-  - **Resolved:** Mark work finished with a mandatory summary note detailing the repair.
-  - **Rejected:** Refuse inappropriate or out-of-scope complaints with written justification.
-- **Confidential Internal Notes:** Post internal remarks visible exclusively to department staff and administrators. Students and public feeds never receive these notes.
-- **Clarification Requests:** Post questions directly to the student reporter. The student receives an in-app notification.
-- **Duplicate Linking:** Link duplicate reports to a parent ticket. Both records remain preserved in the audit database.
+### Tracking & Resolution Verification (`/complaint.php?ref=...`)
+- **My Complaints (`/student/my_complaints.php`):** View status tabs: *All, Open, In Progress, Resolved, Closed*.
+- **Timeline & Remarks:** Read maintenance progress updates and remarks from the warden and staff.
+- **Confirming the Fix:**
+  - When staff marks work completed, status changes to `resolved`.
+  - Review the repair and click **"Confirm Resolution / Accept"** &rarr; closes ticket permanently (`closed_by = 'student'`).
+  - If the problem persists, click **"Still Broken / Reopen"** &rarr; enter an explanation note to return the ticket to the active queue.
 
 ---
 
-## 3. Administrator Control Center (`/admin/dashboard.php`)
+## 2. Hostel Warden / Admin Portal (`/admin/dashboard.php`)
 
-System administrators maintain global institutional oversight.
+The Warden is the central administrator overseeing all hostel facilities.
 
-### Analytics & Live Metrics
-- **Executive Metric Cards:** Total open tickets, unassigned tickets >24 hours, active SLA violations, critical incidents, and 30-day resolution totals.
-- **Interactive Visualizations:** 30-day intake vs. resolution trends and category volume distribution charts.
+### Executive Overview Dashboard
+- Monitor real-time status counters: Open, Pending, In Progress, Overdue SLA, and Resolved this Month.
+- Inspect the **Intake Trends** chart and **Category Breakdown** chart.
+- Quick operational triage lists:
+  - *Unassigned Complaints >24 Hours*
+  - *Overdue SLA Violations*
+  - *Critical Priority Open Requests*
 
-### Global Incident Management (`/admin/complaints.php`)
-- Cross-department lookup, advanced multi-parameter search, and force-reassignment capabilities.
-- Force-closure with mandatory administrative justification logged to the immutable audit ledger.
+### Complaint Triage & Assignment (`/admin/complaints.php`)
+1. Filter complaints by status (`pending`, `assigned`, `in_progress`, `resolved`), hostel building, category, priority, or reference search.
+2. Open ticket details (`/staff/complaint.php?id=X`):
+   - **Assign Staff:** Select an active maintenance technician from the dropdown. The ticket status automatically transitions to `assigned`.
+   - **Adjust Priority:** Elevate priority to `high` or `critical` if required.
+   - **Add Administrative Remarks:** Enter notes visible to staff or student.
 
-### User Administration (`/admin/users.php`)
-- Create new department staff accounts with generated temporary credentials.
-- Disable accounts (blocks login immediately while preserving historical ticket assignments).
-- Trigger manual password reset links.
-- Safeguard: The system prevents disabling or demoting the last active administrator.
+### User & Staff Management (`/admin/users.php`)
+- **Create Maintenance Staff Logins:** Enter staff code, full name, email, department, and initial temporary password.
+- **Enable / Disable Accounts:** Disable graduated students or former staff without deleting historical complaint records.
+- **Trigger Password Resets:** Issue password reset links when students forget their credentials.
 
-### Master Data Configuration (`/admin/master.php`)
-- Full CRUD management of categories, SLA target days, departments, and location trees.
-- Non-destructive soft-disables ensure historical complaints remain readable.
-
-### Student Registry CSV Import (`/admin/import.php`)
-- Upload institutional student registers (`register_no, full_name, email, department, year`).
-- Two-stage import: Validates every row for format and duplicate constraints before committing transactions.
-
-### Reports & Accountability (`/admin/reports.php` & `/admin/accountability.php`)
-- **CSV Data Exports:** Export filtered complaint records with an authorized reporter identity toggle.
-- **Public Accountability Leaderboard:** Displays campus-wide metrics, department reopen rates, and the longest unresolved public issues.
+### Master Configuration (`/admin/master.php`)
+- **Hostel Blocks & Rooms:** Add new hostel blocks, floors, rooms, and common amenity locations.
+- **Categories & SLAs:** Adjust target turnaround working days (1 to 5 days) for each category.
 
 ---
 
-## 4. Notifications & User Preferences
+## 3. Maintenance Staff Portal (`/staff/queue.php`)
 
-- **In-App Notification Center:** Accessible via the top navigation bell. Displays status changes, staff inquiries, and resolution notices.
-- **Theme Switcher:** Toggle between crisp Light paper mode and high-contrast Dark mode using the sun/moon icon in the navigation bar. Preferences persist across sessions via `localStorage`.
+Maintenance technicians handle physical repair tasks assigned by the warden.
+
+### Work Queue
+- View tickets assigned to your department and queue.
+- Use the **"Mine"** tab to filter tickets specifically assigned to you.
+- Review problem title, hostel building, room number, and student contact info.
+
+### Work Execution & Status Updates (`/staff/complaint.php?id=X`)
+1. **Start Work:** Click **"Change Status &rarr; In Progress"** when physical inspection or work begins.
+2. **Review Photos:** Inspect student-uploaded photos of the defective fixture or leak.
+3. **Internal Notes:** Document parts ordered or notes for fellow staff (hidden from students).
+4. **Mark Resolved:**
+   - Once repair is completed, select **"Change Status &rarr; Resolved"**.
+   - A mandatory repair note must be entered (e.g. *"Replaced faulty copper valve and verified water flow with student"*).
+   - The student is immediately notified to verify the fix.
 
 ---
 
-## 5. Frequently Asked Questions & Troubleshooting
+## 4. The 5-Stage Complaint Lifecycle
 
-### Why is my complaint marked "Private"?
-Certain sensitive categories (such as Safety / Harassment or Lost & Found) are automatically enforced as Private by administrative policy to protect student confidentiality.
-
-### Can staff see my identity on public complaints?
-Department staff and administrators can view reporter identity for legitimate campus service triage. However, peer students on the public feed only see `"Anonymous student"` and never receive your name, room number, or GPS coordinates.
-
-### What happens if I forget my password?
-Navigate to `/forgot.php`, enter your registered student or staff email, and follow the password reset link. In local development mode, a debug link is provided directly on the page.
+```
+┌─────────────────────────────────────────────────────────────┐
+│ 1. PENDING: Student submits complaint from hostel room     │
+└──────────────────────────────┬──────────────────────────────┘
+                               │
+                               ▼
+┌─────────────────────────────────────────────────────────────┐
+│ 2. ASSIGNED: Warden reviews & assigns maintenance staff    │
+└──────────────────────────────┬──────────────────────────────┘
+                               │
+                               ▼
+┌─────────────────────────────────────────────────────────────┐
+│ 3. IN PROGRESS: Technician begins repair & inspection       │
+└──────────────────────────────┬──────────────────────────────┘
+                               │
+                               ▼
+┌─────────────────────────────────────────────────────────────┐
+│ 4. RESOLVED: Technician completes work & enters repair note │
+└──────────────────────────────┬──────────────────────────────┘
+                               │
+                ┌──────────────┴──────────────┐
+                ▼                             ▼
+┌───────────────────────────────┐ ┌───────────────────────────┐
+│ 5A. CLOSED: Student confirms  │ │ 5B. REOPENED: If problem  │
+│ satisfactory resolution       │ │ persists, student reopens │
+└───────────────────────────────┘ └───────────────────────────┘
+```

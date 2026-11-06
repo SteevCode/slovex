@@ -23,9 +23,6 @@ require_once SOLVEX_ROOT . '/includes/maintenance.php';
 init_session();
 require_role('staff', 'admin');
 
-// Execute lazy maintenance rules
-run_maintenance();
-
 $user = current_user();
 $userId = (int) $user['id'];
 $userRole = $user['role'];
@@ -64,7 +61,7 @@ if ($userRole === 'staff') {
 
 // Quick Tabs logic
 if ($tab === 'unassigned') {
-    $where[] = 'c.assigned_to IS NULL AND c.status IN (\'submitted\', \'reopened\')';
+    $where[] = 'c.assigned_to IS NULL AND c.status IN (\'pending\', \'submitted\', \'reopened\')';
 } elseif ($tab === 'mine') {
     $where[] = 'c.assigned_to = :my_id';
     $params[':my_id'] = $userId;

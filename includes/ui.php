@@ -100,6 +100,7 @@ function icon(string $name, int $size = 18, string $class = ''): string
 function status_tag(string $status): string
 {
     $labels = [
+        'pending'     => 'Pending',
         'submitted'   => 'Submitted',
         'assigned'    => 'Assigned',
         'in_progress' => 'In Progress',

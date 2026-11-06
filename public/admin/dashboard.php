@@ -20,8 +20,6 @@ require_once SOLVEX_ROOT . '/includes/maintenance.php';
 init_session();
 require_role('admin');
 
-run_maintenance();
-
 $user = current_user();
 $pdo  = db();
 
@@ -29,7 +27,7 @@ $pdo  = db();
 $statsStmt = $pdo->query("
     SELECT
         COUNT(CASE WHEN c.status NOT IN ('closed', 'rejected', 'duplicate') THEN 1 END) AS count_open,
-        COUNT(CASE WHEN c.assigned_to IS NULL AND c.status IN ('submitted', 'reopened') AND c.created_at <= NOW() - INTERVAL 24 HOUR THEN 1 END) AS count_unassigned_24h,
+        COUNT(CASE WHEN c.assigned_to IS NULL AND c.status IN ('pending', 'submitted', 'reopened') AND c.created_at <= NOW() - INTERVAL 24 HOUR THEN 1 END) AS count_unassigned_24h,
         COUNT(CASE WHEN DATEDIFF(NOW(), c.created_at) > cat.target_days AND c.status NOT IN ('closed', 'rejected', 'duplicate') THEN 1 END) AS count_overdue,
         COUNT(CASE WHEN c.priority = 'critical' AND c.status NOT IN ('closed', 'rejected', 'duplicate') THEN 1 END) AS count_critical_open,
         COUNT(CASE WHEN c.status = 'closed' AND c.closed_at >= DATE_FORMAT(NOW(), '%Y-%m-01') THEN 1 END) AS count_resolved_month,
@@ -109,7 +107,7 @@ $unassignedList = $pdo->query("
     SELECT c.id, c.reference, c.title, c.created_at, dept.name AS department_name
     FROM complaints c
     JOIN departments dept ON dept.id = c.department_id
-    WHERE c.assigned_to IS NULL AND c.status IN ('submitted', 'reopened') AND c.created_at <= NOW() - INTERVAL 24 HOUR
+    WHERE c.assigned_to IS NULL AND c.status IN ('pending', 'submitted', 'reopened') AND c.created_at <= NOW() - INTERVAL 24 HOUR
     ORDER BY c.created_at ASC
     LIMIT 10
 ")->fetchAll();
