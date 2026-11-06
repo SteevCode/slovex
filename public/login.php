@@ -1,10 +1,8 @@
 <?php
 /**
- * Solvex Report — Unified Authentication Portal
+ * Solvex Report — Student Login
  * 
- * Supports distinct faces for:
- * - Student Login (Default)
- * - Faculty / Staff / Warden Login
+ * Primary login interface for hostel students.
  */
 
 define('SOLVEX_ROOT', dirname(__DIR__));
@@ -24,24 +22,14 @@ if (is_logged_in()) {
 $error      = null;
 $identifier = '';
 
-// Determine active portal face ('student' or 'staff')
-$role = get('role', 'student');
-if (!in_array($role, ['student', 'staff'], true)) {
-    $role = 'student';
-}
-
 if (is_post()) {
     csrf_verify();
 
     $identifier = trim(post('identifier', ''));
     $password   = post('password', '');
-    $rolePost   = post('role', 'student');
-    if (in_array($rolePost, ['student', 'staff'], true)) {
-        $role = $rolePost;
-    }
 
     if (empty($identifier) || empty($password)) {
-        $error = 'Please enter both your ID and password.';
+        $error = 'Please enter both your Register Number and password.';
     } else {
         $result = attempt_login($identifier, $password);
 
@@ -54,39 +42,22 @@ if (is_post()) {
     }
 }
 
-$isStaff = ($role === 'staff');
-$pageTitle = $isStaff ? 'Faculty & Staff Login' : 'Student Login';
+$pageTitle = 'Student Login';
 require_once SOLVEX_ROOT . '/includes/header.php';
 ?>
 
 <div class="container py-5 d-flex justify-content-center align-items-center" style="min-height: calc(100vh - 160px);">
-    <div class="card shadow-sm border" style="max-width: 440px; width: 100%; border-top: 4px solid <?= $isStaff ? '#14213D' : 'var(--clr-brand-accent)' ?> !important; border-radius: 6px;">
+    <div class="card shadow-sm border" style="max-width: 420px; width: 100%; border-top: 4px solid var(--clr-brand-accent) !important; border-radius: 6px;">
         <div class="card-body p-4 p-sm-5">
-            
-            <!-- Quick Portal Switcher Pills -->
-            <div class="d-flex rounded p-1 mb-4 bg-light border" role="tablist">
-                <a href="<?= base_url('login.php?role=student') ?>" 
-                   class="btn btn-sm flex-fill text-center text-decoration-none rounded <?= !$isStaff ? 'btn-primary shadow-sm fw-bold' : 'btn-light text-secondary' ?>">
-                    <i class="bi bi-mortarboard-fill me-1"></i> Student
-                </a>
-                <a href="<?= base_url('login.php?role=staff') ?>" 
-                   class="btn btn-sm flex-fill text-center text-decoration-none rounded <?= $isStaff ? 'btn-dark shadow-sm fw-bold' : 'btn-light text-secondary' ?>">
-                    <i class="bi bi-shield-lock-fill me-1"></i> Faculty &amp; Staff
-                </a>
-            </div>
 
-            <!-- Header Face -->
+            <!-- Student Face Header -->
             <div class="text-center mb-4">
                 <div class="d-inline-flex align-items-center justify-content-center rounded-circle mb-2" 
-                     style="width: 52px; height: 52px; background: <?= $isStaff ? '#14213D' : 'var(--clr-brand-accent)' ?>; color: #fff;">
-                    <i class="bi <?= $isStaff ? 'bi-shield-check fs-4' : 'bi-mortarboard fs-4' ?>"></i>
+                     style="width: 52px; height: 52px; background: var(--clr-brand-accent); color: #fff;">
+                    <i class="bi bi-mortarboard-fill fs-4"></i>
                 </div>
-                <h1 class="h4 fw-bold text-dark mb-1">
-                    <?= $isStaff ? 'Faculty &amp; Staff Login' : 'Student Login' ?>
-                </h1>
-                <p class="text-secondary small mb-0">
-                    <?= $isStaff ? 'Hostel Warden &amp; Maintenance Portal' : 'Hostel Complaint &amp; Maintenance Portal' ?>
-                </p>
+                <h1 class="h4 fw-bold text-dark mb-1">Student Login</h1>
+                <p class="text-secondary small mb-0">Hostel Maintenance &amp; Complaint Portal</p>
             </div>
 
             <?php if ($error): ?>
@@ -96,22 +67,21 @@ require_once SOLVEX_ROOT . '/includes/header.php';
                 </div>
             <?php endif; ?>
 
-            <!-- Login Form -->
-            <form method="POST" action="<?= base_url('login.php?role=' . urlencode($role)) ?>" novalidate>
+            <!-- Student Login Form -->
+            <form method="POST" action="<?= base_url('login.php') ?>" novalidate>
                 <?= csrf_field() ?>
-                <input type="hidden" name="role" value="<?= e($role) ?>">
 
                 <div class="mb-3">
                     <label for="identifier" class="form-label small fw-semibold text-dark mb-1">
-                        <?= $isStaff ? 'Staff ID or Email' : 'Register Number' ?>
+                        Register Number
                     </label>
                     <input 
                         type="text" 
-                        class="form-control" 
+                        class="form-control text-uppercase" 
                         id="identifier" 
                         name="identifier" 
                         value="<?= e($identifier) ?>" 
-                        placeholder="<?= $isStaff ? 'STF001 or email' : '2024CS100' ?>" 
+                        placeholder="2024CS100" 
                         required 
                         autocomplete="username"
                         autofocus
@@ -138,32 +108,16 @@ require_once SOLVEX_ROOT . '/includes/header.php';
                     >
                 </div>
 
-                <button type="submit" class="btn <?= $isStaff ? 'btn-dark' : 'btn-solvex btn-primary' ?> w-100 py-2 fw-semibold">
+                <button type="submit" class="btn btn-solvex btn-primary w-100 py-2 fw-semibold">
                     <i class="bi bi-box-arrow-in-right me-1"></i> Sign In
                 </button>
             </form>
 
-            <!-- Bottom Role Links -->
-            <div class="pt-4 mt-4 border-top text-center small">
-                <?php if ($isStaff): ?>
-                    <span class="text-secondary">Are you a student resident?</span>
-                    <a href="<?= base_url('login.php?role=student') ?>" class="fw-semibold ms-1 text-decoration-none">
-                        Student Login &rarr;
-                    </a>
-                <?php else: ?>
-                    <div class="mb-2">
-                        <span class="text-secondary">New student?</span>
-                        <a href="<?= base_url('register.php') ?>" class="fw-semibold ms-1 text-decoration-none">
-                            Register here
-                        </a>
-                    </div>
-                    <div>
-                        <span class="text-secondary">Hostel staff or warden?</span>
-                        <a href="<?= base_url('login.php?role=staff') ?>" class="fw-semibold ms-1 text-decoration-none">
-                            Staff Login &rarr;
-                        </a>
-                    </div>
-                <?php endif; ?>
+            <div class="pt-4 mt-4 border-top text-center small text-secondary">
+                New student? 
+                <a href="<?= base_url('register.php') ?>" class="fw-semibold ms-1 text-decoration-none">
+                    Register here
+                </a>
             </div>
 
         </div>
