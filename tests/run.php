@@ -157,7 +157,18 @@ run_check('Security', 'Auth reset tokens older than validity period are expired'
     $isExpired
 );
 
-// ── 5. MASTER SUMMARY ────────────────────────────────────────────────
+// ── 5. EXECUTE REMEDIATION REGRESSION SUITE ─────────────────────────
+include SOLVEX_ROOT . '/tests/remediation_tests.php';
+foreach ($remResults as $rem) {
+    $allResults[] = [
+        'category' => 'Remediation',
+        'name'     => $rem['name'],
+        'status'   => $rem['status'],
+        'evidence' => $rem['evidence']
+    ];
+}
+
+// ── 6. MASTER SUMMARY ────────────────────────────────────────────────
 echo "\n═══════════════════════════════════════════════════════════════════════\n";
 $total = count($allResults);
 $passed = count(array_filter($allResults, fn($r) => $r['status'] === 'PASS'));

@@ -131,38 +131,13 @@ try {
 echo "✅ Connected\n";
 
 // ── 6. Schema Initialization & Seed Verification ───────────────
-echo "[6/6] Verifying Database Schema & Seed Data... ";
+echo "[6/6] Verifying Database Schema via Master Installer... ";
 try {
-    $dbName = DB_NAME;
-    $pdo->exec("CREATE DATABASE IF NOT EXISTS `{$dbName}` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
-    $pdo->exec("USE `{$dbName}`");
-
-    $hasComplaints = (bool) $pdo->query("SHOW TABLES LIKE 'complaints'")->fetch();
-
-    if (!$hasComplaints) {
-        echo "Creating schema tables... ";
-        $schemaSql = file_get_contents(SOLVEX_ROOT . '/database/schema.sql');
-        $pdo->exec($schemaSql);
-
-        if (file_exists(SOLVEX_ROOT . '/database/migrate_phase3.sql')) {
-            $migrateSql = file_get_contents(SOLVEX_ROOT . '/database/migrate_phase3.sql');
-            $pdo->exec($migrateSql);
-        }
-    } else {
-        // Ensure Phase 3 tables exist
-        $hasSettings = (bool) $pdo->query("SHOW TABLES LIKE 'settings'")->fetch();
-        if (!$hasSettings && file_exists(SOLVEX_ROOT . '/database/migrate_phase3.sql')) {
-            $migrateSql = file_get_contents(SOLVEX_ROOT . '/database/migrate_phase3.sql');
-            $pdo->exec($migrateSql);
-        }
-    }
+    ob_start();
+    include SOLVEX_ROOT . '/scripts/install.php';
+    ob_end_clean();
 
     $cCount = (int) $pdo->query("SELECT COUNT(*) FROM complaints")->fetchColumn();
-    if ($cCount === 0) {
-        echo "Seeding demo records... ";
-        require_once SOLVEX_ROOT . '/database/demo_seed.php';
-        $cCount = (int) $pdo->query("SELECT COUNT(*) FROM complaints")->fetchColumn();
-    }
 } catch (Exception $e) {
     echo "❌ FAILED\n";
     fwrite(STDERR, "Database setup error: " . $e->getMessage() . "\n");

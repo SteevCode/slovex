@@ -67,11 +67,13 @@ if (!$complaint) {
     exit;
 }
 
-// Department check: staff can only see their department's complaints (admin can view all)
-if ($userRole === 'staff' && (int)$complaint['department_id'] !== $userDeptId) {
-    http_response_code(404);
-    include SOLVEX_ROOT . '/public/errors/404.php';
-    exit;
+// Department & Sensitive check: staff can only see non-sensitive complaints in their department (admin can view all)
+if ($userRole === 'staff') {
+    if ((int)$complaint['department_id'] !== $userDeptId || !empty($complaint['sensitive'])) {
+        http_response_code(404);
+        include SOLVEX_ROOT . '/public/errors/404.php';
+        exit;
+    }
 }
 
 // Handle POST actions

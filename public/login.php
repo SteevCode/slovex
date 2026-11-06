@@ -35,7 +35,7 @@ if (is_post()) {
         $result = attempt_login($identifier, $password);
 
         if ($result['success']) {
-            flash('success', 'Welcome back, ' . htmlspecialchars($_SESSION['user_name'] ?? '') . '!');
+            flash('success', 'Welcome back, ' . ($_SESSION['user_name'] ?? '') . '!');
             redirect(role_home($_SESSION['user_role'] ?? 'student'));
         } else {
             $error = $result['message'];
@@ -53,7 +53,7 @@ require_once SOLVEX_ROOT . '/includes/header.php';
         <div class="auth-side">
             <div>
                 <a href="<?= base_url() ?>" class="d-inline-block mb-4 text-white text-decoration-none">
-                    <img src="<?= asset_url('img/logo-light.svg') ?>" alt="Solvex Report" height="38">
+                    <img src="<?= asset_url('img/logo-with-text.png') ?>" alt="Solvex Report" height="42" class="mb-2" style="filter: brightness(1.2);">
                 </a>
                 <h2 class="h3 fw-bold text-white mb-3">Campus Infrastructure Resolution Platform</h2>
                 <p class="text-white-50 small mb-4">
@@ -64,14 +64,14 @@ require_once SOLVEX_ROOT . '/includes/header.php';
                 </div>
             </div>
             <div class="pt-3 border-top border-light border-opacity-25 small text-white-50">
-                <i class="bi bi-shield-check text-warning me-1"></i> Over 94% of campus issues resolved within SLA.
+                <i class="bi bi-shield-check text-warning me-1"></i> Transparent campus problem resolution with public civic accountability.
             </div>
         </div>
 
         <div class="auth-main">
             <div class="auth-logo d-md-none text-center mb-4">
                 <a href="<?= base_url() ?>" aria-label="Solvex Report Home">
-                    <img src="<?= asset_url('img/logo-full.svg') ?>" alt="Solvex Report" height="40">
+                    <img src="<?= asset_url('img/logo-with-text.png') ?>" alt="Solvex Report" height="42">
                 </a>
             </div>
 

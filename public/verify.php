@@ -34,7 +34,7 @@ require_once SOLVEX_ROOT . '/includes/header.php';
     <div class="auth-card text-center" style="max-width: 480px;">
         <div class="auth-logo">
             <a href="<?= base_url() ?>" aria-label="Solvex Report Home">
-                <img src="<?= asset_url('img/logo-full.svg') ?>" alt="Solvex Report" height="44">
+                <img src="<?= asset_url('img/logo-with-text.png') ?>" alt="Solvex Report" height="44">
             </a>
         </div>
 

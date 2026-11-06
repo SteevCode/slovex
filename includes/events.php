@@ -68,7 +68,7 @@ function get_transition_matrix(): array
             ],
             'resolved' => [
                 'roles'          => ['staff', 'admin'],
-                'require_reason' => false,
+                'require_reason' => true,
             ],
             'duplicate' => [
                 'roles'          => ['staff', 'admin'],
@@ -82,14 +82,14 @@ function get_transition_matrix(): array
             ],
             'resolved' => [
                 'roles'          => ['staff', 'admin'],
-                'require_reason' => false,
+                'require_reason' => true,
             ],
         ],
         'resolved' => [
             'closed' => [
-                'roles'          => ['student', 'staff', 'admin'],
-                'require_reason' => false,
-                'owner_only'     => true, // If student, must be owner
+                'roles'          => ['student', 'admin'],
+                'require_reason' => false, // Required for admin via explicit check below
+                'owner_only'     => true,  // If student, must be owner
             ],
             'reopened' => [
                 'roles'          => ['student', 'staff', 'admin'],
@@ -141,7 +141,7 @@ function change_status(int $complaintId, string $newStatus, array $actor, ?strin
 
     // 1. Fetch current complaint details
     $stmt = $pdo->prepare(
-        'SELECT id, reference, student_id, department_id, assigned_to, status, title
+        'SELECT id, reference, student_id, department_id, assigned_to, status, title, priority
          FROM complaints
          WHERE id = ?'
     );
@@ -214,12 +214,46 @@ function change_status(int $complaintId, string $newStatus, array $actor, ?strin
         }
     }
 
+    // Hold date validation
+    if ($newStatus === 'on_hold') {
+        $holdDate = $actor['hold_until'] ?? null;
+        if (empty($holdDate)) {
+            return [
+                'success' => false,
+                'message' => 'An on-hold target date is required.'
+            ];
+        }
+        $holdTs = strtotime($holdDate);
+        $todayTs = strtotime('today');
+        $maxTs = strtotime('+7 days', $todayTs);
+        if (!$holdTs || $holdTs <= $todayTs) {
+            return [
+                'success' => false,
+                'message' => 'On-hold date must be a valid future date.'
+            ];
+        }
+        if ($holdTs > $maxTs && $actorRole !== 'admin') {
+            return [
+                'success' => false,
+                'message' => 'On-hold duration cannot exceed 7 days without administrator authorization.'
+            ];
+        }
+    }
+
     // Reason requirement check
     $trimmedReason = trim($reason ?? '');
     if (!empty($rule['require_reason']) && empty($trimmedReason)) {
         return [
             'success' => false,
             'message' => 'A reason is required when changing status to ' . str_replace('_', ' ', $newStatus) . '.'
+        ];
+    }
+
+    // Admin force-closure requires justification reason
+    if ($newStatus === 'closed' && $actorRole === 'admin' && empty($trimmedReason)) {
+        return [
+            'success' => false,
+            'message' => 'Administrator closure requires a justification reason.'
         ];
     }
 

@@ -6,7 +6,7 @@
 SET NAMES utf8mb4;
 
 -- ── Departments ─────────────────────────────────────────────
-INSERT INTO `departments` (`id`, `name`) VALUES
+INSERT IGNORE INTO `departments` (`id`, `name`) VALUES
     (1, 'Maintenance'),
     (2, 'Electrical'),
     (3, 'IT'),
@@ -14,15 +14,8 @@ INSERT INTO `departments` (`id`, `name`) VALUES
     (5, 'Hostel Warden'),
     (6, 'Security');
 
--- ── Staff Users (password: Staff@123) ───────────────────────
--- password_hash for "Staff@123" using PASSWORD_DEFAULT
-INSERT INTO `users` (`register_no`, `staff_code`, `full_name`, `email`, `password_hash`, `role`, `department_id`, `status`, `email_verified_at`, `created_at`) VALUES
-    (NULL, 'STF001', 'Rajesh Kumar', 'rajesh.kumar@solvex.edu', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'staff', 1, 'active', NOW(), NOW()),
-    (NULL, 'STF002', 'Priya Sharma', 'priya.sharma@solvex.edu', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'staff', 3, 'active', NOW(), NOW()),
-    (NULL, 'STF003', 'Mohammed Ali', 'mohammed.ali@solvex.edu', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'staff', 6, 'active', NOW(), NOW());
-
 -- ── Categories (10 from Architecture doc) ───────────────────
-INSERT INTO `categories` (`id`, `name`, `icon`, `department_id`, `default_priority`, `default_visibility`, `force_private`, `sensitive`, `target_days`, `location_required`, `is_active`) VALUES
+INSERT IGNORE INTO `categories` (`id`, `name`, `icon`, `department_id`, `default_priority`, `default_visibility`, `force_private`, `sensitive`, `target_days`, `location_required`, `is_active`) VALUES
     (1,  'Plumbing / Water',    'bi-droplet',       1, 'medium',   'public',  0, 0, 3, 1, 1),
     (2,  'Furniture / Civil',   'bi-house-door',     1, 'medium',   'public',  0, 0, 5, 1, 1),
     (3,  'Electrical Issue',    'bi-lightning',      2, 'high',     'public',  0, 0, 2, 1, 1),
@@ -36,10 +29,10 @@ INSERT INTO `categories` (`id`, `name`, `icon`, `department_id`, `default_priori
 
 -- ── Locations (hierarchical tree) ───────────────────────────
 -- Level 0: Campus
-INSERT INTO `locations` (`id`, `parent_id`, `name`, `type`) VALUES (1, NULL, 'Main Campus', 'campus');
+INSERT IGNORE INTO `locations` (`id`, `parent_id`, `name`, `type`) VALUES (1, NULL, 'Main Campus', 'campus');
 
 -- Level 1: Zones
-INSERT INTO `locations` (`id`, `parent_id`, `name`, `type`) VALUES
+INSERT IGNORE INTO `locations` (`id`, `parent_id`, `name`, `type`) VALUES
     (2,  1, 'Academic Block',  'building'),
     (3,  1, 'Library',         'building'),
     (4,  1, 'Canteen',         'building'),
@@ -48,13 +41,13 @@ INSERT INTO `locations` (`id`, `parent_id`, `name`, `type`) VALUES
     (7,  1, 'Playground',      'area');
 
 -- Academic Block floors
-INSERT INTO `locations` (`id`, `parent_id`, `name`, `type`) VALUES
+INSERT IGNORE INTO `locations` (`id`, `parent_id`, `name`, `type`) VALUES
     (8,  2, 'Floor 1', 'floor'),
     (9,  2, 'Floor 2', 'floor'),
     (10, 2, 'Floor 3', 'floor');
 
 -- Academic Block rooms/labs
-INSERT INTO `locations` (`id`, `parent_id`, `name`, `type`) VALUES
+INSERT IGNORE INTO `locations` (`id`, `parent_id`, `name`, `type`) VALUES
     (11, 8,  'Room 101',     'room'),
     (12, 8,  'Room 102',     'room'),
     (13, 8,  'Computer Lab', 'lab'),
@@ -66,12 +59,12 @@ INSERT INTO `locations` (`id`, `parent_id`, `name`, `type`) VALUES
     (19, 10, 'Chemistry Lab','lab');
 
 -- Boys Hostel floors & areas
-INSERT INTO `locations` (`id`, `parent_id`, `name`, `type`) VALUES
+INSERT IGNORE INTO `locations` (`id`, `parent_id`, `name`, `type`) VALUES
     (20, 5, 'Floor 1', 'floor'),
     (21, 5, 'Floor 2', 'floor'),
     (22, 5, 'Floor 3', 'floor');
 
-INSERT INTO `locations` (`id`, `parent_id`, `name`, `type`) VALUES
+INSERT IGNORE INTO `locations` (`id`, `parent_id`, `name`, `type`) VALUES
     (23, 20, 'Common Washroom', 'washroom'),
     (24, 20, 'Corridor',        'corridor'),
     (25, 20, 'Room Area',       'room_area'),
@@ -83,12 +76,12 @@ INSERT INTO `locations` (`id`, `parent_id`, `name`, `type`) VALUES
     (31, 22, 'Room Area',       'room_area');
 
 -- Girls Hostel floors & areas
-INSERT INTO `locations` (`id`, `parent_id`, `name`, `type`) VALUES
+INSERT IGNORE INTO `locations` (`id`, `parent_id`, `name`, `type`) VALUES
     (32, 6, 'Floor 1', 'floor'),
     (33, 6, 'Floor 2', 'floor'),
     (34, 6, 'Floor 3', 'floor');
 
-INSERT INTO `locations` (`id`, `parent_id`, `name`, `type`) VALUES
+INSERT IGNORE INTO `locations` (`id`, `parent_id`, `name`, `type`) VALUES
     (35, 32, 'Common Washroom', 'washroom'),
     (36, 32, 'Corridor',        'corridor'),
     (37, 32, 'Room Area',       'room_area'),
@@ -100,7 +93,7 @@ INSERT INTO `locations` (`id`, `parent_id`, `name`, `type`) VALUES
     (43, 34, 'Room Area',       'room_area');
 
 -- ── Student Master (30 sample students) ─────────────────────
-INSERT INTO `student_master` (`register_no`, `full_name`, `department`, `year`, `hosteller`) VALUES
+INSERT IGNORE INTO `student_master` (`register_no`, `full_name`, `department`, `year`, `hosteller`) VALUES
     ('2024CS001', 'Aarav Patel',        'Computer Science',    2, 1),
     ('2024CS002', 'Diya Nair',          'Computer Science',    2, 1),
     ('2024CS003', 'Vihaan Reddy',       'Computer Science',    2, 0),

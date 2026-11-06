@@ -7,7 +7,7 @@
 - Required PHP Extensions: `pdo_mysql`, `gd`, `fileinfo`, `exif`, `mbstring`, `session`.
 
 ### ⚡ Fastest Way: One-Click Runner
-Simply double-click [`run.bat`](file:///f:/main/chumma/steve.code/projects/Solvex%20Report/run.bat) or run in PowerShell:
+Simply double-click `run.bat` or run in PowerShell:
 ```powershell
 .\run.ps1
 ```

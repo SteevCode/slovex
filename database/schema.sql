@@ -12,7 +12,8 @@ CREATE TABLE IF NOT EXISTS `departments` (
     `id`           INT UNSIGNED    NOT NULL AUTO_INCREMENT,
     `name`         VARCHAR(100)    NOT NULL,
     `head_user_id` INT UNSIGNED    NULL DEFAULT NULL,
-    PRIMARY KEY (`id`)
+    PRIMARY KEY (`id`),
+    CONSTRAINT `fk_departments_head` FOREIGN KEY (`head_user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ── 2. Users ────────────────────────────────────────────────
@@ -26,8 +27,12 @@ CREATE TABLE IF NOT EXISTS `users` (
     `role`              ENUM('student','staff','admin') NOT NULL DEFAULT 'student',
     `department_id`     INT UNSIGNED    NULL DEFAULT NULL,
     `status`            ENUM('pending','active','disabled') NOT NULL DEFAULT 'pending',
-    `email_verified_at` DATETIME        NULL DEFAULT NULL,
-    `created_at`        DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `email_verified_at`    DATETIME        NULL DEFAULT NULL,
+    `must_change_password` TINYINT(1)      NOT NULL DEFAULT 0,
+    `department`           VARCHAR(100)    NULL DEFAULT NULL,
+    `year`                 TINYINT UNSIGNED NULL DEFAULT NULL,
+    `hosteller`            TINYINT(1)      NOT NULL DEFAULT 0,
+    `created_at`           DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`),
     UNIQUE KEY `uk_register_no` (`register_no`),
     UNIQUE KEY `uk_staff_code` (`staff_code`),
@@ -36,10 +41,6 @@ CREATE TABLE IF NOT EXISTS `users` (
     INDEX `idx_status` (`status`),
     CONSTRAINT `fk_users_department` FOREIGN KEY (`department_id`) REFERENCES `departments` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- Add FK for department head (circular reference, add after users exist)
-ALTER TABLE `departments`
-    ADD CONSTRAINT `fk_departments_head` FOREIGN KEY (`head_user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- ── 3. Student Master ───────────────────────────────────────
 CREATE TABLE IF NOT EXISTS `student_master` (
@@ -113,6 +114,10 @@ CREATE TABLE IF NOT EXISTS `complaints` (
     INDEX `idx_visibility_status_created` (`visibility`, `status`, `created_at`),
     INDEX `idx_category_location_created` (`category_id`, `location_id`, `created_at`),
     INDEX `idx_student_created` (`student_id`, `created_at`),
+    INDEX `idx_assigned_status` (`assigned_to`, `status`),
+    INDEX `idx_dept_status_priority` (`department_id`, `status`, `priority`),
+    INDEX `idx_hold_until` (`hold_until`),
+    INDEX `idx_resolved_at` (`resolved_at`),
     CONSTRAINT `fk_complaints_student` FOREIGN KEY (`student_id`) REFERENCES `users` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE,
     CONSTRAINT `fk_complaints_category` FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE,
     CONSTRAINT `fk_complaints_location` FOREIGN KEY (`location_id`) REFERENCES `locations` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE,
@@ -216,6 +221,29 @@ CREATE TABLE IF NOT EXISTS `login_attempts` (
     PRIMARY KEY (`id`),
     INDEX `idx_identifier_time` (`identifier`, `attempted_at`),
     INDEX `idx_ip_time` (`ip`, `attempted_at`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ── 14. Settings (key-value store for system throttles) ─────
+CREATE TABLE IF NOT EXISTS `settings` (
+    `key`        VARCHAR(100) NOT NULL,
+    `value`      TEXT         NULL,
+    `updated_at` DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (`key`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ── 15. Admin Log (audit trail for administrative changes) ──
+CREATE TABLE IF NOT EXISTS `admin_log` (
+    `id`         INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `actor_id`   INT UNSIGNED NULL DEFAULT NULL,
+    `action`     VARCHAR(100) NOT NULL,
+    `target`     VARCHAR(255) NOT NULL,
+    `detail`     TEXT         NULL,
+    `created_at` DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`),
+    INDEX `idx_actor` (`actor_id`),
+    INDEX `idx_action` (`action`),
+    INDEX `idx_created` (`created_at`),
+    CONSTRAINT `fk_adminlog_actor` FOREIGN KEY (`actor_id`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 SET FOREIGN_KEY_CHECKS = 1;

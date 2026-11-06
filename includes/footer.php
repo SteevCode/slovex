@@ -10,7 +10,7 @@
                     <div class="emergency-title">Emergency Notice & Urgent Life Safety</div>
                     <p>
                         For life-threatening incidents, active fires, electrical shocks, or immediate physical harassment, call 
-                        <strong>Campus Security Control (+91 44 2257 8888)</strong> or <strong>Emergency (112)</strong> immediately. 
+                        <strong>Campus Security Control (<?= e(EMERGENCY_CONTACT_PHONE) ?>)</strong> or <strong>Emergency (112)</strong> immediately. 
                         Do not wait for ticket triage for life safety emergencies.
                     </p>
                 </div>
@@ -19,7 +19,7 @@
             <div class="row g-4 mt-2">
                 <!-- Brand Summary -->
                 <div class="col-lg-4 col-md-6">
-                    <img src="<?= asset_url('img/logo-light.svg') ?>" alt="Solvex Report" height="32" class="mb-3">
+                    <img src="<?= asset_url('img/logo-with-text.png') ?>" alt="Solvex Report" height="34" class="mb-3" style="filter: brightness(1.2);">
                     <p class="text-secondary small mb-3">
                         Civic problem reporting and accountable resolution system for college campuses and hostels. 
                         Every complaint carries a public ageing counter and an immutable audit timeline.

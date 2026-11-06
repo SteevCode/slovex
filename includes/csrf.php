@@ -52,8 +52,7 @@ function csrf_verify(): void
         die('Invalid or missing security token. Please go back and try again.');
     }
 
-    // Regenerate token after use to prevent replay
-    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+    // Keep token valid across multiple tabs and AJAX operations in the session
 }
 
 /**

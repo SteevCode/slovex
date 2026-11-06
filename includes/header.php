@@ -69,7 +69,8 @@ if ($currentUser && in_array($currentUser['role'], ['staff', 'admin'], true)) {
     <header class="navbar-solvex">
         <div class="container d-flex align-items-center justify-content-between">
             <a class="navbar-brand d-flex align-items-center" href="<?= base_url() ?>" aria-label="Solvex Report Home">
-                <img src="<?= asset_url('img/logo-full.svg') ?>" alt="Solvex Report" height="36">
+                <img src="<?= asset_url('img/logo-with-text.png') ?>" alt="Solvex Report" height="38" class="d-none d-sm-inline">
+                <img src="<?= asset_url('img/logo-icon.png') ?>" alt="Solvex Report" height="36" class="d-inline d-sm-none">
             </a>
 
             <!-- Nav Items -->
@@ -113,6 +114,12 @@ if ($currentUser && in_array($currentUser['role'], ['staff', 'admin'], true)) {
                         </a>
                         <a href="<?= base_url('admin/master.php') ?>" class="nav-link <?= ($activeNav ?? '') === 'master' ? 'active' : '' ?>">
                             <i class="bi bi-gear me-1"></i> Master Data
+                        </a>
+                        <a href="<?= base_url('admin/import.php') ?>" class="nav-link <?= ($activeNav ?? '') === 'import' ? 'active' : '' ?>">
+                            <i class="bi bi-file-earmark-arrow-up me-1"></i> Import
+                        </a>
+                        <a href="<?= base_url('admin/reports.php') ?>" class="nav-link <?= ($activeNav ?? '') === 'reports' ? 'active' : '' ?>">
+                            <i class="bi bi-download me-1"></i> Reports
                         </a>
                         <a href="<?= base_url('admin/accountability.php') ?>" class="nav-link <?= ($activeNav ?? '') === 'accountability' ? 'active' : '' ?>">
                             <i class="bi bi-bar-chart me-1"></i> Accountability

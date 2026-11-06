@@ -62,15 +62,16 @@ $stmt = $pdo->prepare($sql);
 $stmt->execute($params);
 $leaderboard = $stmt->fetchAll();
 
-// 2. Department Accountability Metrics
+// 2. Department Accountability Metrics (reopen rate from events, avg resolution from resolved_at)
 $deptSummaryStmt = $pdo->query("
     SELECT d.id, d.name AS dept_name,
-           COUNT(c.id) AS total_complaints,
-           COUNT(CASE WHEN c.status NOT IN ('closed', 'rejected', 'duplicate') THEN 1 END) AS open_count,
-           ROUND(AVG(CASE WHEN c.status NOT IN ('closed', 'rejected', 'duplicate') THEN DATEDIFF(NOW(), c.created_at) END), 1) AS avg_days_open,
-           ROUND(COUNT(CASE WHEN c.status = 'reopened' THEN 1 END) / NULLIF(COUNT(c.id), 0) * 100, 1) AS reopen_rate
+           COUNT(DISTINCT c.id) AS total_complaints,
+           COUNT(DISTINCT CASE WHEN c.status NOT IN ('closed', 'rejected', 'duplicate') THEN c.id END) AS open_count,
+           ROUND(AVG(CASE WHEN c.resolved_at IS NOT NULL THEN DATEDIFF(c.resolved_at, c.created_at) END), 1) AS avg_days_to_resolve,
+           ROUND(COUNT(DISTINCT CASE WHEN ce.new_value = 'reopened' THEN c.id END) / NULLIF(COUNT(DISTINCT CASE WHEN c.resolved_at IS NOT NULL OR c.closed_at IS NOT NULL THEN c.id END), 0) * 100, 1) AS reopen_rate
     FROM departments d
     LEFT JOIN complaints c ON c.department_id = d.id
+    LEFT JOIN complaint_events ce ON ce.complaint_id = c.id AND ce.type = 'status_change'
     GROUP BY d.id, d.name
     ORDER BY open_count DESC
 ");

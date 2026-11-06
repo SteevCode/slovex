@@ -50,7 +50,7 @@ if (is_post()) {
 
             send_mail($result['email'], $emailSubject, $emailBody);
 
-            if (APP_ENV === 'local') {
+            if (APP_ENV === 'local' && defined('ENABLE_DEMO_TOOLS') && ENABLE_DEMO_TOOLS) {
                 $debugLink = $resetUrl;
             }
         }
@@ -69,7 +69,7 @@ require_once SOLVEX_ROOT . '/includes/header.php';
     <div class="auth-card" style="max-width: 480px;">
         <div class="auth-logo">
             <a href="<?= base_url() ?>" aria-label="Solvex Report Home">
-                <img src="<?= asset_url('img/logo-full.svg') ?>" alt="Solvex Report" height="44">
+                <img src="<?= asset_url('img/logo-with-text.png') ?>" alt="Solvex Report" height="44">
             </a>
         </div>
 

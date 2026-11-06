@@ -73,19 +73,25 @@ function is_post(): bool
 }
 
 /**
- * Get a POST value, trimmed. Returns default if not set.
+ * Get a POST value, trimmed. Returns default if not set or if an array is submitted.
  */
 function post(string $key, string $default = ''): string
 {
-    return isset($_POST[$key]) ? trim($_POST[$key]) : $default;
+    if (!isset($_POST[$key]) || !is_string($_POST[$key])) {
+        return $default;
+    }
+    return trim($_POST[$key]);
 }
 
 /**
- * Get a GET value, trimmed.
+ * Get a GET value, trimmed. Returns default if not set or if an array is submitted.
  */
 function get(string $key, string $default = ''): string
 {
-    return isset($_GET[$key]) ? trim($_GET[$key]) : $default;
+    if (!isset($_GET[$key]) || !is_string($_GET[$key])) {
+        return $default;
+    }
+    return trim($_GET[$key]);
 }
 
 /**
@@ -124,16 +130,79 @@ function days_since(string $datetime): int
 }
 
 /**
+ * Calculate the active days a complaint was or has been open.
+ * Stops counting at resolved_at or closed_at for closed/resolved complaints.
+ *
+ * @param array $complaint Record with created_at, status, and optional resolved_at/closed_at
+ * @return int Days open
+ */
+function days_open(array $complaint): int
+{
+    $createdStr = $complaint['created_at'] ?? null;
+    if (!$createdStr) {
+        return 0;
+    }
+    $created = new DateTime($createdStr, new DateTimeZone('Asia/Kolkata'));
+
+    $status = $complaint['status'] ?? 'submitted';
+    if (in_array($status, ['resolved', 'closed', 'rejected', 'duplicate'], true)) {
+        $endStr = $complaint['resolved_at'] ?? ($complaint['closed_at'] ?? null);
+        if ($endStr) {
+            $end = new DateTime($endStr, new DateTimeZone('Asia/Kolkata'));
+            return max(0, $created->diff($end)->days);
+        }
+    }
+
+    $now = new DateTime('now', new DateTimeZone('Asia/Kolkata'));
+    return max(0, $created->diff($now)->days);
+}
+
+/**
+ * Retrieve all descendant location IDs including the root using recursive CTE.
+ * Works on MySQL 8+ and MariaDB 10.2+.
+ */
+function get_location_descendant_ids(int $locationId): array
+{
+    if ($locationId <= 0) {
+        return [];
+    }
+    static $cache = [];
+    if (isset($cache[$locationId])) {
+        return $cache[$locationId];
+    }
+    try {
+        $stmt = db()->prepare('
+            WITH RECURSIVE loc_tree AS (
+                SELECT id FROM locations WHERE id = ?
+                UNION ALL
+                SELECT l.id FROM locations l JOIN loc_tree lt ON l.parent_id = lt.id
+            )
+            SELECT id FROM loc_tree
+        ');
+        $stmt->execute([$locationId]);
+        $ids = array_map('intval', $stmt->fetchAll(PDO::FETCH_COLUMN));
+        $cache[$locationId] = !empty($ids) ? $ids : [$locationId];
+        return $cache[$locationId];
+    } catch (Exception $e) {
+        return [$locationId];
+    }
+}
+
+/**
  * Get the user's IP address.
+ * Only trusts X-Forwarded-For if REMOTE_ADDR is in TRUSTED_PROXIES list.
  */
 function get_ip(): string
 {
-    // On shared hosting behind a proxy, check forwarded headers
-    if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-        $ips = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
-        return trim($ips[0]);
+    $remote = $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
+    if (defined('TRUSTED_PROXIES') && TRUSTED_PROXIES !== '' && !empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+        $trustedList = array_map('trim', explode(',', TRUSTED_PROXIES));
+        if (in_array($remote, $trustedList, true)) {
+            $ips = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
+            return trim($ips[0]);
+        }
     }
-    return $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
+    return $remote;
 }
 
 /**

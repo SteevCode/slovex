@@ -18,6 +18,11 @@ require_once SOLVEX_ROOT . '/includes/upload.php';
 
 $pdo = db();
 $isReset = in_array('--reset', $argv, true);
+$isForce = in_array('--force', $argv, true);
+
+if (defined('APP_ENV') && APP_ENV !== 'local' && !$isForce) {
+    die("ABORTED: demo_seed.php cannot run in " . (defined('APP_ENV') ? APP_ENV : 'non-local') . " environment without --force flag.\n");
+}
 
 echo "═════════════════════════════════════════════════════════════\n";
 echo "   Solvex Report — Realistic Demo Seed Generator (Phase 4)   \n";

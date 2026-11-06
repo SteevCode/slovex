@@ -72,3 +72,27 @@ This document records the foundational architectural, security, and design decis
 * **Uploads** are re-encoded with GD (EXIF/GPS stripped), stored under random names in `storage/uploads` (outside the web root), and served only through `image.php` after `can_view_complaint()`.
 * **AJAX CSRF** (`csrf_verify_ajax`) validates the token without rotating it, so in-page fetch actions (affected toggle, notification mark-read) keep working.
 * **"Urgent" is a hint only:** it does not override category default priority; it is recorded on the created event and prefixed on staff notifications.
+
+---
+
+## 6. Phase 4 & Audit Remediation Decisions
+
+* **Demo Gating & Production Defaults:**
+  * Auto-copy of example configurations was permanently removed. Applications must never forge default credentials.
+  * `APP_ENV` defaults to `production` in `config.local.example.php`.
+  * Demo impersonation (`?demo_as=`), quick-login shortcuts, and debug verification links are strictly gated behind `defined('APP_ENV') && APP_ENV === 'local' && defined('ENABLE_DEMO_TOOLS') && ENABLE_DEMO_TOOLS`. In production environments, they are dead code.
+* **Per-Session CSRF Architecture:**
+  * CSRF verification validates the submitted token against `$_SESSION['csrf_token']` without destroying or rotating it on every single POST. This prevents multi-tab form submissions from invalidating sibling tabs while preserving replay protection.
+* **Array-Safe Parameter Handling:**
+  * `get()` and `post()` helpers explicitly verify `is_string()` before trimming to prevent `TypeError` when malicious or unexpected array payloads (`?q[]=x`) are submitted.
+* **Trusted Proxy Verification:**
+  * `get_ip()` ignores `X-Forwarded-For` unless `REMOTE_ADDR` matches a pre-configured, explicit `TRUSTED_PROXIES` allowlist.
+* **Sensitive Complaint Boundary Enforcement:**
+  * Complaints belonging to sensitive categories (`categories.sensitive = 1`) are strictly isolated to the reporting student and system administrators. Department staff cannot view them in the resolution queue, nor access them via direct URL.
+* **Accurate Civic Ageing (`days_open`):**
+  * Ageing calculations for resolved or closed tickets freeze at `resolved_at` or `closed_at`, preventing historical tickets from showing artificial delays or misleading "overdue" warnings.
+* **Administrative Safeguards:**
+  * The sole active administrator cannot be disabled or demoted.
+  * Administrative force-closure requires an audit-logged justification reason.
+* **Idempotent Migration Architecture:**
+  * Single master installer `scripts/install.php` uses a `schema_migrations` ledger table to record applied migrations, ensuring safe, idempotent re-execution in both CI and live environments.

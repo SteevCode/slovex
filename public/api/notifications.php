@@ -12,7 +12,9 @@ require_once SOLVEX_ROOT . '/includes/helpers.php';
 require_once SOLVEX_ROOT . '/includes/auth.php';
 require_once SOLVEX_ROOT . '/includes/csrf.php';
 
-init_session();
+// Passive session initialization for read-only polling calls (doesn't refresh idle timer)
+$isPoll = ($_SERVER['REQUEST_METHOD'] === 'GET');
+init_session($isPoll);
 header('Content-Type: application/json; charset=utf-8');
 
 if (!is_logged_in()) {

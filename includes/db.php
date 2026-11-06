@@ -15,11 +15,15 @@ function db(): PDO
     static $pdo = null;
 
     if ($pdo === null) {
+        $databaseName = (getenv('SOLVEX_ENV') === 'test' || (defined('SOLVEX_ENV') && SOLVEX_ENV === 'test'))
+            ? (defined('DB_NAME_TEST') ? DB_NAME_TEST : 'solvex_test')
+            : DB_NAME;
+
         $dsn = sprintf(
             'mysql:host=%s;port=%d;dbname=%s;charset=utf8mb4',
             DB_HOST,
             DB_PORT,
-            DB_NAME
+            $databaseName
         );
 
         $options = [

@@ -68,8 +68,8 @@ if (is_post()) {
             $mailResult = send_mail($email, $emailSubject, $emailBody);
             $success = 'Account created successfully! We sent a verification link to ' . e($email) . '. Please click the link to activate your account.';
 
-            // In local development with log mode, expose link for seamless testing
-            if (APP_ENV === 'local') {
+            // In local development with log mode and demo tools enabled, expose link for seamless testing
+            if (APP_ENV === 'local' && defined('ENABLE_DEMO_TOOLS') && ENABLE_DEMO_TOOLS) {
                 $debugLink = $verifyUrl;
             }
         }
@@ -86,7 +86,7 @@ require_once SOLVEX_ROOT . '/includes/header.php';
         <div class="auth-side">
             <div>
                 <a href="<?= base_url() ?>" class="d-inline-block mb-4 text-white text-decoration-none">
-                    <img src="<?= asset_url('img/logo-light.svg') ?>" alt="Solvex Report" height="38">
+                    <img src="<?= asset_url('img/logo-with-text.png') ?>" alt="Solvex Report" height="42" class="mb-2" style="filter: brightness(1.2);">
                 </a>
                 <h2 class="h3 fw-bold text-white mb-3">Join Your Campus Community</h2>
                 <p class="text-white-50 small mb-4">
@@ -104,7 +104,7 @@ require_once SOLVEX_ROOT . '/includes/header.php';
         <div class="auth-main">
             <div class="auth-logo d-md-none text-center mb-4">
                 <a href="<?= base_url() ?>" aria-label="Solvex Report Home">
-                    <img src="<?= asset_url('img/logo-full.svg') ?>" alt="Solvex Report" height="40">
+                    <img src="<?= asset_url('img/logo-with-text.png') ?>" alt="Solvex Report" height="42">
                 </a>
             </div>
 

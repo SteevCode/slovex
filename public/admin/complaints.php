@@ -42,8 +42,10 @@ $where = ['1=1'];
 $params = [];
 
 if (!empty($q)) {
-    $where[] = '(c.reference LIKE :q OR c.title LIKE :q OR c.description LIKE :q)';
-    $params[':q'] = '%' . $q . '%';
+    $where[] = '(c.reference LIKE :q1 OR c.title LIKE :q2 OR c.description LIKE :q3)';
+    $params[':q1'] = '%' . $q . '%';
+    $params[':q2'] = '%' . $q . '%';
+    $params[':q3'] = '%' . $q . '%';
 }
 if (!empty($status)) {
     $where[] = 'c.status = :status';
@@ -93,7 +95,7 @@ $orderClause = match ($sort) {
 // Fetch complaints
 $sql = "
     SELECT c.id, c.reference, c.title, c.status, c.priority, c.visibility,
-           c.created_at, c.updated_at, c.assigned_to,
+           c.created_at, c.updated_at, c.resolved_at, c.closed_at, c.assigned_to,
            cat.name AS category_name, cat.icon AS category_icon, cat.target_days,
            dept.name AS department_name,
            loc.name AS location_name,
@@ -221,9 +223,10 @@ require_once SOLVEX_ROOT . '/includes/header.php';
                         <tbody>
                             <?php foreach ($complaints as $c): ?>
                                 <?php
-                                    $daysOpen = days_since($c['created_at']);
+                                    $daysOpen = days_open($c);
                                     $targetDays = (int)$c['target_days'];
-                                    $isOverdue = ($daysOpen > $targetDays && !in_array($c['status'], ['closed', 'rejected', 'duplicate'], true));
+                                    $isDone = in_array($c['status'], ['closed', 'rejected', 'duplicate'], true);
+                                    $isOverdue = (!$isDone && $daysOpen > $targetDays);
                                 ?>
                                 <tr>
                                     <td class="ps-4">

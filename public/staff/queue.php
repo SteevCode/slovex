@@ -52,9 +52,10 @@ $offset     = ($page - 1) * $perPage;
 $where = ['1=1'];
 $params = [];
 
-// Department boundary constraint
+// Department boundary constraint (and sensitive complaints restricted from staff)
 if ($userRole === 'staff') {
     $where[] = 'c.department_id = :dept_id';
+    $where[] = 'cat.sensitive = 0';
     $params[':dept_id'] = $userDeptId;
 } elseif ($userRole === 'admin' && $deptFilter > 0) {
     $where[] = 'c.department_id = :dept_id';
@@ -75,8 +76,10 @@ if ($tab === 'unassigned') {
 
 // Filter inputs override / supplement
 if (!empty($q)) {
-    $where[] = '(c.reference LIKE :q OR c.title LIKE :q OR c.description LIKE :q)';
-    $params[':q'] = '%' . $q . '%';
+    $where[] = '(c.reference LIKE :q1 OR c.title LIKE :q2 OR c.description LIKE :q3)';
+    $params[':q1'] = '%' . $q . '%';
+    $params[':q2'] = '%' . $q . '%';
+    $params[':q3'] = '%' . $q . '%';
 }
 if (!empty($status) && $tab !== 'on_hold') {
     $where[] = 'c.status = :status';
@@ -91,7 +94,13 @@ if ($categoryId > 0) {
     $params[':category_id'] = $categoryId;
 }
 if ($locationId > 0) {
-    $where[] = 'c.location_id = :location_id';
+    $where[] = 'c.location_id IN (
+        WITH RECURSIVE loc_tree AS (
+            SELECT id FROM locations WHERE id = :location_id
+            UNION ALL
+            SELECT l.id FROM locations l JOIN loc_tree lt ON l.parent_id = lt.id
+        ) SELECT id FROM loc_tree
+    )';
     $params[':location_id'] = $locationId;
 }
 if ($assignee === 'me') {
@@ -130,7 +139,7 @@ $totalPages = max(1, (int) ceil($totalRecords / $perPage));
 // Main complaints query sorted by Priority (critical > high > medium > low) then Age (created_at ASC)
 $sql = "
     SELECT c.id, c.reference, c.title, c.description, c.status, c.priority, c.visibility,
-           c.created_at, c.updated_at, c.hold_until, c.assigned_to,
+           c.created_at, c.updated_at, c.resolved_at, c.closed_at, c.hold_until, c.assigned_to,
            cat.name AS category_name, cat.icon AS category_icon, cat.target_days,
            dept.name AS department_name,
            loc.name AS location_name,
@@ -170,7 +179,7 @@ $tabCounts = [
     'on_hold'    => 0
 ];
 
-$baseDeptCond = ($userRole === 'staff') ? "AND c.department_id = {$userDeptId}" : ($deptFilter > 0 ? "AND c.department_id = {$deptFilter}" : "");
+$baseDeptCond = ($userRole === 'staff') ? "AND c.department_id = {$userDeptId} AND cat.sensitive = 0" : ($deptFilter > 0 ? "AND c.department_id = {$deptFilter}" : "");
 $tabCountSql = "
     SELECT
         COUNT(*) AS count_all,
@@ -362,10 +371,11 @@ require_once SOLVEX_ROOT . '/includes/header.php';
                         <tbody>
                             <?php foreach ($complaints as $c): ?>
                                 <?php
-                                    $daysOpen = days_since($c['created_at']);
+                                    $daysOpen = days_open($c);
                                     $targetDays = (int)$c['target_days'];
-                                    $isOverdue = ($daysOpen > $targetDays && !in_array($c['status'], ['closed', 'rejected', 'duplicate'], true));
-                                    $chipClass = $isOverdue ? 'danger' : (($daysOpen > ($targetDays / 2)) ? 'warning' : '');
+                                    $isDone = in_array($c['status'], ['closed', 'rejected', 'duplicate'], true);
+                                    $isOverdue = (!$isDone && $daysOpen > $targetDays);
+                                    $chipClass = $isOverdue ? 'danger' : ((!$isDone && $daysOpen > ($targetDays / 2)) ? 'warning' : '');
                                 ?>
                                 <tr class="<?= $isOverdue ? 'table-warning' : '' ?>">
                                     <td class="ps-4">

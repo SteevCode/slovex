@@ -176,13 +176,16 @@ if ($userAffStmt->fetch()) {
 }
 
 $isOwner = ($userId === (int) $rawComplaint['student_id']);
-$daysOpen = days_since($complaint['created_at']);
+$daysOpen = days_open($complaint);
 $targetDays = (int) $complaint['target_days'];
+$isDone = in_array($complaint['status'], ['closed', 'rejected', 'duplicate'], true);
 $chipClass = '';
-if ($daysOpen > $targetDays) {
-    $chipClass = 'danger';
-} elseif ($daysOpen > ($targetDays / 2)) {
-    $chipClass = 'warning';
+if (!$isDone) {
+    if ($daysOpen > $targetDays) {
+        $chipClass = 'danger';
+    } elseif ($daysOpen > ($targetDays / 2)) {
+        $chipClass = 'warning';
+    }
 }
 
 $pageTitle = $complaint['reference'] . ' — ' . $complaint['title'];
@@ -409,16 +412,16 @@ require_once SOLVEX_ROOT . '/includes/header.php';
                                 <div class="p-3 rounded-3 border bg-white shadow-xs">
                                     <div class="d-flex align-items-center justify-content-between mb-2">
                                         <div class="d-flex align-items-center gap-2">
-                                            <span class="avatar-initials sm" style="background-color: <?= avatar_color($com['author_name']) ?>;">
-                                                <?= e(initials($com['author_name'])) ?>
-                                            </span>
-                                            <span class="fw-bold small text-navy"><?php
+                                            <?php
                                                 $commentAuthor = $com['author_name'];
                                                 if ((int) $com['user_id'] === (int) $rawComplaint['student_id'] && !can_see_reporter($user, $rawComplaint)) {
                                                     $commentAuthor = 'Anonymous student';
                                                 }
-                                                echo e($commentAuthor);
-                                            ?></span>
+                                            ?>
+                                            <span class="avatar-initials sm" style="background-color: <?= avatar_color($commentAuthor) ?>;">
+                                                <?= e(initials($commentAuthor)) ?>
+                                            </span>
+                                            <span class="fw-bold small text-navy"><?= e($commentAuthor) ?></span>
                                             <span class="badge bg-light text-secondary border text-uppercase" style="font-size: 0.65rem;"><?= e($com['author_role']) ?></span>
                                         </div>
                                         <span class="text-muted" style="font-size: 0.75rem;"><?= format_date($com['created_at']) ?></span>

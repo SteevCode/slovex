@@ -72,6 +72,19 @@ if (is_post()) {
         if ($targetUserId === (int)$user['id']) {
             flash('danger', 'You cannot disable your own administrator account.');
         } else {
+            // Guard: Never disable the last active administrator
+            $tgtStmt = $pdo->prepare('SELECT role, status FROM users WHERE id = ?');
+            $tgtStmt->execute([$targetUserId]);
+            $tgtUser = $tgtStmt->fetch();
+
+            if ($tgtUser && $tgtUser['role'] === 'admin' && $newStatus === 'disabled') {
+                $activeAdminCount = (int)$pdo->query("SELECT COUNT(*) FROM users WHERE role = 'admin' AND status = 'active'")->fetchColumn();
+                if ($activeAdminCount <= 1) {
+                    flash('danger', 'Operation refused: Cannot disable the sole active administrator account.');
+                    redirect(base_url("admin/users.php?tab={$tab}"));
+                }
+            }
+
             $pdo->prepare('UPDATE users SET status = ? WHERE id = ?')->execute([$newStatus, $targetUserId]);
             admin_log($user['id'], 'toggle_user_status', "user:{$targetUserId}", "Set status to {$newStatus}");
             flash('success', "User account status updated to {$newStatus}.");
@@ -173,8 +186,8 @@ require_once SOLVEX_ROOT . '/includes/header.php';
                     </div>
                     <div class="col-md-3">
                         <label class="form-label small fw-semibold">Temporary Password</label>
-                        <input type="text" class="form-control-solvex form-control-sm" name="temporary_password" value="Staff@2026" required>
-                        <div class="text-muted" style="font-size:0.7rem;">Will force change on first login.</div>
+                        <input type="text" class="form-control-solvex form-control-sm font-monospace" name="temporary_password" value="<?= e(bin2hex(random_bytes(4)) . '!X9') ?>" required>
+                        <div class="text-muted" style="font-size:0.7rem;">Random one-time password; user must change upon login.</div>
                     </div>
                     <div class="col-12 d-flex justify-content-end gap-2">
                         <button type="button" class="btn-solvex btn-secondary btn-sm" data-bs-toggle="collapse" data-bs-target="#newStaffCollapse">Cancel</button>

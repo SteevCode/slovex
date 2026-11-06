@@ -554,6 +554,9 @@ a:hover {
 .status-pill.rejected      { background: #FEE2E2; color: #B91C1C; }
 .status-pill.rejected::before  { background: #EF4444; }
 
+.status-pill.duplicate     { background: #E2E8F0; color: #475569; }
+.status-pill.duplicate::before { background: #94A3B8; }
+
 /* ── Priority Tags ───────────────────────────────────────── */
 .priority-tag {
     display: inline-flex;

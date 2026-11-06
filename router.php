@@ -6,8 +6,9 @@
  *   php -S 127.0.0.1:8000 router.php
  */
 
-$uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-$path = __DIR__ . '/public' . $uri;
+$uri = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
+$publicDir = str_ends_with(__DIR__, 'public') ? __DIR__ : __DIR__ . '/public';
+$path = $publicDir . $uri;
 
 // 1. If physical static file or directory with index.php exists, serve it
 if ($uri !== '/' && file_exists($path)) {
@@ -24,11 +25,11 @@ if ($uri !== '/' && file_exists($path)) {
 
 // 2. Root directory -> index.php
 if ($uri === '/' || $uri === '') {
-    require __DIR__ . '/public/index.php';
+    require $publicDir . '/index.php';
     return;
 }
 
 // 3. Fallback: custom 404 error page
 http_response_code(404);
-require __DIR__ . '/public/errors/404.php';
+require $publicDir . '/errors/404.php';
 

@@ -8,10 +8,14 @@
 
 /**
  * Start a secure session with proper cookie settings.
+ * @param bool $passive If true, does not refresh last_activity (for background polls)
  */
-function init_session(): void
+function init_session(bool $passive = false): void
 {
     if (session_status() === PHP_SESSION_ACTIVE) {
+        if (!$passive && isset($_SESSION['user_id'])) {
+            $_SESSION['last_activity'] = time();
+        }
         return;
     }
 
@@ -28,8 +32,8 @@ function init_session(): void
 
     session_start();
 
-    // Local dev automated capture session impersonation
-    if (defined('APP_ENV') && APP_ENV === 'local' && !empty($_GET['demo_as']) && !is_logged_in()) {
+    // Local dev automated capture session impersonation (gated strictly behind local + ENABLE_DEMO_TOOLS)
+    if (defined('APP_ENV') && APP_ENV === 'local' && defined('ENABLE_DEMO_TOOLS') && ENABLE_DEMO_TOOLS && !empty($_GET['demo_as']) && !is_logged_in()) {
         $demoRole = $_GET['demo_as'];
         if (in_array($demoRole, ['student', 'staff', 'admin'], true)) {
             $stmt = db()->prepare("SELECT id, full_name, role FROM users WHERE role = ? AND status = 'active' LIMIT 1");
@@ -54,7 +58,9 @@ function init_session(): void
             return;
         }
     }
-    $_SESSION['last_activity'] = time();
+    if (!$passive) {
+        $_SESSION['last_activity'] = time();
+    }
 }
 
 /**
@@ -83,7 +89,7 @@ function current_user(): ?array
         return $user;
     }
 
-    $stmt = db()->prepare('SELECT id, register_no, staff_code, full_name, email, role, department_id, status FROM users WHERE id = ? AND status = ?');
+    $stmt = db()->prepare('SELECT id, register_no, staff_code, full_name, email, role, department_id, status, must_change_password FROM users WHERE id = ? AND status = ?');
     $stmt->execute([$_SESSION['user_id'], 'active']);
     $user = $stmt->fetch();
     $cachedId = $_SESSION['user_id'];
@@ -100,12 +106,22 @@ function current_user(): ?array
 
 /**
  * Require the user to be logged in. Redirects to login if not.
+ * Also enforces mandatory password reset if must_change_password is set.
  */
 function require_login(): void
 {
-    if (!is_logged_in() || !current_user()) {
+    $user = current_user();
+    if (!is_logged_in() || !$user) {
         flash('warning', 'Please log in to continue.');
         redirect(base_url('login.php'));
+    }
+
+    if (!empty($user['must_change_password'])) {
+        $script = basename($_SERVER['SCRIPT_NAME'] ?? '');
+        if ($script !== 'change_password.php' && $script !== 'logout.php') {
+            flash('warning', 'You must change your temporary password before continuing.');
+            redirect(base_url('change_password.php'));
+        }
     }
 }
 
@@ -216,30 +232,31 @@ function attempt_login(string $identifier, string $password): array
 }
 
 /**
- * Check if login attempts are throttled for an identifier or IP.
+ * Check if login attempts are throttled for an identifier + IP pair.
+ * Locks per (identifier + IP) to prevent user-DOS, and overall IP to prevent distributed attacks.
  */
 function is_throttled(string $identifier, string $ip): bool
 {
     $pdo = db();
     $cutoff = date('Y-m-d H:i:s', time() - (LOGIN_LOCKOUT_MINUTES * 60));
 
-    // Check by identifier
+    // Check specific (identifier + IP) pair
     $stmt = $pdo->prepare(
         'SELECT COUNT(*) FROM login_attempts
-         WHERE identifier = ? AND attempted_at > ? AND success = 0'
+         WHERE identifier = ? AND ip = ? AND attempted_at > ? AND success = 0'
     );
-    $stmt->execute([$identifier, $cutoff]);
+    $stmt->execute([$identifier, $ip, $cutoff]);
     if ($stmt->fetchColumn() >= MAX_LOGIN_ATTEMPTS) {
         return true;
     }
 
-    // Check by IP
+    // IP-wide threshold (high limit to allow NAT/campus Wi-Fi while blocking wide brute-force)
     $stmt = $pdo->prepare(
         'SELECT COUNT(*) FROM login_attempts
          WHERE ip = ? AND attempted_at > ? AND success = 0'
     );
     $stmt->execute([$ip, $cutoff]);
-    if ($stmt->fetchColumn() >= MAX_LOGIN_ATTEMPTS) {
+    if ($stmt->fetchColumn() >= (MAX_LOGIN_ATTEMPTS * 5)) {
         return true;
     }
 
@@ -307,14 +324,14 @@ function register_student(string $registerNo, string $email, string $password): 
     $stmt = $pdo->prepare('SELECT id FROM users WHERE register_no = ?');
     $stmt->execute([$registerNo]);
     if ($stmt->fetch()) {
-        return ['success' => false, 'message' => 'An account with this register number already exists.', 'token' => null];
+        return ['success' => false, 'message' => 'Registration cannot be processed. Please verify your details or contact the helpdesk.', 'token' => null];
     }
 
     // Check email uniqueness
     $stmt = $pdo->prepare('SELECT id FROM users WHERE email = ?');
     $stmt->execute([$email]);
     if ($stmt->fetch()) {
-        return ['success' => false, 'message' => 'This email address is already in use.', 'token' => null];
+        return ['success' => false, 'message' => 'Registration cannot be processed. Please verify your details or contact the helpdesk.', 'token' => null];
     }
 
     // Create user
@@ -371,6 +388,10 @@ function verify_email_token(string $token): array
 
     if ($record['used_at'] !== null) {
         return ['success' => false, 'message' => 'This verification link has already been used.'];
+    }
+
+    if ($record['status'] === 'disabled') {
+        return ['success' => false, 'message' => 'This account has been disabled. Please contact administration.'];
     }
 
     if (strtotime($record['expires_at']) < time()) {

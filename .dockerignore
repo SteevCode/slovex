@@ -1,0 +1,13 @@
+.git
+.github
+.qodo
+.dist
+storage/logs/*
+!storage/logs/.gitkeep
+storage/uploads/*
+!storage/uploads/.gitkeep
+config.local.php
+node_modules
+__pycache__
+*.log
+

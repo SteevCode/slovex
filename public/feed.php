@@ -72,7 +72,7 @@ $orderSql = match ($sort) {
 
 // Main Query with JOINs and Subqueries for zero N+1
 $sql = "
-    SELECT c.id, c.reference, c.title, c.description, c.status, c.priority, c.created_at,
+    SELECT c.id, c.reference, c.title, c.description, c.status, c.priority, c.created_at, c.resolved_at, c.closed_at,
            c.student_id,
            cat.name AS category_name, cat.icon AS category_icon, cat.target_days,
            dept.name AS department_name,
@@ -191,9 +191,10 @@ require_once SOLVEX_ROOT . '/includes/header.php';
             <?php foreach ($complaints as $c): ?>
                 <?php
                     $comp = sanitize_complaint_for_view($c, $user);
-                    $daysOpen = days_since($comp['created_at']);
+                    $daysOpen = days_open($comp);
                     $targetDays = (int)$comp['target_days'];
-                    $chipClass = ($daysOpen > $targetDays) ? 'danger' : (($daysOpen > ($targetDays / 2)) ? 'warning' : '');
+                    $isDone = in_array($comp['status'], ['closed', 'rejected', 'duplicate'], true);
+                    $chipClass = (!$isDone && $daysOpen > $targetDays) ? 'danger' : ((!$isDone && $daysOpen > ($targetDays / 2)) ? 'warning' : '');
                     $isUserAffected = ((int)$c['is_user_affected'] > 0);
                     $isOwner = ((int)$c['student_id'] === $userId);
                 ?>
@@ -219,7 +220,7 @@ require_once SOLVEX_ROOT . '/includes/header.php';
 
                             <div class="position-absolute top-0 end-0 m-2">
                                 <span class="days-chip <?= $chipClass ?> shadow-xs">
-                                    <i class="bi bi-clock-history"></i> <?= $daysOpen ?>d open
+                                    <i class="bi bi-clock-history"></i> <?= $daysOpen ?>d <?= $isDone ? 'total' : 'open' ?>
                                 </span>
                             </div>
                         </div>
