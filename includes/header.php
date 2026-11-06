@@ -20,6 +20,12 @@ init_session();
 $currentUser = current_user();
 $pageTitle   = $pageTitle ?? APP_NAME;
 $flashes     = get_flashes();
+
+// Run lazy maintenance rules for authenticated staff and admin users
+if ($currentUser && in_array($currentUser['role'], ['staff', 'admin'], true)) {
+    require_once SOLVEX_ROOT . '/includes/maintenance.php';
+    run_maintenance();
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -92,11 +98,25 @@ $flashes     = get_flashes();
                             <i class="bi bi-inbox-fill me-1"></i> Queue
                         </a>
                         <a href="<?= base_url('feed.php') ?>" class="nav-link">Public Feed</a>
+                        <a href="<?= base_url('student/notifications.php') ?>" class="nav-link">
+                            <i class="bi bi-bell me-1"></i> Notifications
+                        </a>
                     <?php elseif ($currentUser['role'] === 'admin'): ?>
                         <a href="<?= base_url('admin/dashboard.php') ?>" class="nav-link <?= ($activeNav ?? '') === 'dashboard' ? 'active' : '' ?>">
                             <i class="bi bi-speedometer2 me-1"></i> Overview
                         </a>
-                        <a href="<?= base_url('feed.php') ?>" class="nav-link">Public Feed</a>
+                        <a href="<?= base_url('admin/complaints.php') ?>" class="nav-link <?= ($activeNav ?? '') === 'complaints' ? 'active' : '' ?>">
+                            <i class="bi bi-list-task me-1"></i> Complaints
+                        </a>
+                        <a href="<?= base_url('admin/users.php') ?>" class="nav-link <?= ($activeNav ?? '') === 'users' ? 'active' : '' ?>">
+                            <i class="bi bi-people me-1"></i> Users
+                        </a>
+                        <a href="<?= base_url('admin/master.php') ?>" class="nav-link <?= ($activeNav ?? '') === 'master' ? 'active' : '' ?>">
+                            <i class="bi bi-gear me-1"></i> Master Data
+                        </a>
+                        <a href="<?= base_url('admin/accountability.php') ?>" class="nav-link <?= ($activeNav ?? '') === 'accountability' ? 'active' : '' ?>">
+                            <i class="bi bi-bar-chart me-1"></i> Accountability
+                        </a>
                     <?php endif; ?>
                 <?php endif; ?>
             </nav>

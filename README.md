@@ -1,165 +1,140 @@
-# Solvex Report — Campus Issue Resolution & Civic Tracking
+# Solvex Report — Campus Incident Resolution System
 
-> **Phase 1: Foundation Release**  
-> Skeleton, Design System, Database Architecture, Authentication, and Public Landing Page.
-
-Solvex Report is a civic problem reporting and transparent tracking web application designed for college campuses and hostels. Students report problems (electrical, civil, IT, mess, safety), staff members resolve them, and an administrator oversees everything. Every complaint has a public ageing record and an immutable audit timeline.
+Solvex Report is a modern, transparent campus problem reporting, department triage, and civic accountability system built for college and university hostel environments.
 
 ---
 
-## Technical Stack
+## 🌟 Key Features
 
-* **Language:** PHP 8.0+ (Native PDO, Sessions, No frameworks)
-* **Frontend:** HTML5, CSS3 (Bootstrap 5.3 + bespoke `solvex.css`), Vanilla JavaScript (`solvex.js`)
-* **Database:** MySQL 8.0+ / MariaDB 10.6+ (InnoDB, `utf8mb4`, strict foreign keys)
-* **Timezone:** Asia/Kolkata (`+05:30` set on every connection)
-* **Security:** Bcrypt password hashing, SHA-256 token hashing, strict CSRF tokens, IP/identifier throttling, XSS output escaping.
+- **3-Step Guided Intake:** Visual category tag cards, cascading location selectors, Geolocation API coordinate capture, and drag-and-drop photos.
+- **Upload Pipeline Security:** Re-encodes uploaded images via GD to strip EXIF and GPS markers; prevents arbitrary file uploads via `finfo` magic byte validation.
+- **Role-Based Lifecycle:**
+  - **Students:** Report issues, follow live immutable audit timelines, view public feed anonymously, and verify resolution (Accept / Reopen).
+  - **Staff:** Zendesk/Jira-style department queue, ticket workspace, assignment, internal notes (hidden from students), resolution notes, and SLA tracking.
+  - **Administrators:** Stripe-style metric cards, Chart.js trend charts, user management, category/department master configuration, CSV student registry import, and report exports.
+- **Accountability Leaderboard:** Public transparent ranking of longest unresolved campus issues with department reopen rates.
+- **Zero Cron Dependency:** Built-in lazy maintenance engine throttled to 60-second atomic locks auto-closes expired tickets and flags overdue holds.
 
 ---
 
-## Directory Structure
+## 🚀 Quick Start Guide (Plug & Play Across Any Machine)
 
-```text
+Solvex Report is fully self-contained and portable. When transferring this project to any new computer, you can run any of the single startup files:
+
+### 1. Cross-Platform Python Launcher (Universal — Windows, macOS, Linux)
+```bash
+python run.py
+```
+*Automatically detects OS, locates PHP, starts MySQL if offline, verifies 6-point environment health, runs database migrations & seeds, and launches the application in your browser.*
+
+### 2. Windows Double-Click or Batch
+Double-click `run.bat` or run:
+```cmd
+run.bat
+```
+*Or via PowerShell:*
+```powershell
+.\run.ps1
+```
+
+### 3. Linux / macOS Terminal
+```bash
+chmod +x run.sh
+./run.sh
+```
+
+### 4. Containerized 1-Command Setup (Docker)
+If the target machine has Docker installed:
+```bash
+docker compose up -d
+```
+Access at: **[http://localhost:8000](http://localhost:8000)**
+
+---
+
+### Manual Setup & Commands (Optional)
+
+#### 1. Requirements
+- PHP 8.2+ with `pdo_mysql`, `gd`, `fileinfo`, `exif`, `mbstring`.
+- MySQL / MariaDB (via XAMPP or native).
+
+#### 2. Database Initialization
+```powershell
+& "C:\xampp\mysql\bin\mysql.exe" -u root -e "CREATE DATABASE IF NOT EXISTS solvex_report;"
+& "C:\xampp\mysql\bin\mysql.exe" -u root solvex_report -e "source database/schema.sql;"
+& "C:\xampp\mysql\bin\mysql.exe" -u root solvex_report -e "source database/seed.sql;"
+& "C:\xampp\mysql\bin\mysql.exe" -u root solvex_report -e "source database/migrate_phase2.sql;"
+& "C:\xampp\mysql\bin\mysql.exe" -u root solvex_report -e "source database/migrate_phase3.sql;"
+```
+
+#### 3. Generate Realistic Demo Data
+Populate 45 realistic complaints and Indian student records across all campus facilities:
+```powershell
+& "C:\xampp\php\php.exe" database/demo_seed.php --reset
+```
+
+#### 4. Run Automated Test Suite
+Verify all 31 end-to-end tests across phases 1, 2, 3, and security hardening:
+```powershell
+& "C:\xampp\php\php.exe" tests/run.php
+```
+
+#### 5. Start Development Server Manually
+```powershell
+& "C:\xampp\php\php.exe" -S 127.0.0.1:8000 router.php
+```
+Navigate to: **[http://localhost:8000](http://localhost:8000)**
+
+---
+
+## 🔑 Demo Credentials
+
+| Role | Email | Password | Identifier | Access Dashboard |
+|---|---|---|---|---|
+| **Student** | `student@solvex.edu` | `Student@123` | `2024CS100` | `/student/dashboard.php` |
+| **Staff** | `staff@solvex.edu` | `Staff@123` | `STF001` | `/staff/queue.php` |
+| **Admin** | `admin@solvex.edu` | `Admin@123` | `ADM001` | `/admin/dashboard.php` |
+
+---
+
+## 📁 Project Structure
+
+```
 Solvex Report/
-├── config.local.example.php   # Template for local configuration
-├── config.local.php           # Local environment credentials (git-ignored)
+├── config.local.php            # Database & mail credentials (git-ignored)
 ├── database/
-│   ├── schema.sql             # 13 tables with constraints & indexes
-│   ├── seed.sql               # Departments, categories, locations, sample students
-│   └── student_master_sample.csv # 30 sample student enrolment records
+│   ├── schema.sql              # Master table schemas
+│   ├── seed.sql                # Default departments & categories
+│   ├── migrate_phase2.sql      # Phase 2 indexes
+│   ├── migrate_phase3.sql      # Phase 3 settings & admin_log
+│   └── demo_seed.php           # Realistic demo dataset generator (--reset)
 ├── docs/
-│   ├── ARCHITECTURE.md        # System architecture specification
-│   ├── DECISIONS.md           # Architecture and technical decisions
-│   ├── DESIGN.md              # Design system & component tokens
-│   └── TEST_PHASE1.md         # Phase 1 test suite results & evidence
+│   ├── ARCHITECTURE.md         # System technical design & permissions
+│   ├── DEPLOYMENT.md           # Deployment steps for XAMPP and hosting
+│   ├── DEMO_SCRIPT.md          # 6-minute live demonstration narrative
+│   ├── SECURITY_AUDIT.md       # Complete vulnerability & hardening checklist
+│   ├── TEST_PHASE2.md          # Phase 2 test evidence
+│   ├── TEST_PHASE3.md          # Phase 3 test evidence
+│   └── USER_GUIDE.md           # Step-by-step role documentation
 ├── includes/
-│   ├── auth.php               # Authentication, throttling, token validation
-│   ├── config.php             # Core constants, paths, error logging
-│   ├── csrf.php               # CSRF token generation and validation
-│   ├── db.php                 # Singleton PDO connection wrapper
-│   ├── footer.php             # Shared layout footer & scripts
-│   ├── header.php             # Shared layout header & navigation
-│   ├── helpers.php            # Escaping e(), URLs, formatting helpers
-│   ├── mailer.php             # Mail dispatcher (SMTP & local log mode)
-│   └── permissions.php        # Role authorization stubs
-├── public/                    # Web root
-│   ├── index.php              # Public landing page with live counters
-│   ├── login.php              # Multi-role authentication endpoint
-│   ├── register.php           # 3-step student registration wizard
-│   ├── verify.php             # Email verification & activation
-│   ├── forgot.php             # Password recovery request
-│   ├── reset.php              # New password setup
-│   ├── logout.php             # Session destruction & sign out
-│   ├── admin/
-│   │   └── dashboard.php      # Admin dashboard placeholder
-│   ├── errors/
-│   │   ├── 403.php            # Forbidden error page
-│   │   └── 404.php            # Not found error page
-│   ├── staff/
-│   │   └── queue.php          # Staff resolution queue placeholder
-│   ├── student/
-│   │   └── dashboard.php      # Student dashboard placeholder
-│   └── assets/
-│       ├── css/
-│       │   └── solvex.css     # Bespoke design system
-│       ├── img/
-│       │   ├── logo-full.svg  # Full brand logo
-│       │   ├── logo-light.svg # Dark-mode / footer logo
-│       │   ├── logo-mark.svg  # Brand pin icon
-│       │   ├── favicon.svg    # Vector favicon
-│       │   ├── favicon-32.png # 32x32 raster favicon
-│       │   ├── apple-touch-icon.png # 180x180 mobile touch icon
-│       │   └── og-image.png   # 1200x630 OpenGraph social share card
-│       └── js/
-│           └── solvex.js      # Form validation, toasts, counters, strength meter
-├── scripts/
-│   └── create_admin.php       # CLI script to provision the super admin
-├── storage/
-│   ├── logs/                  # Application and mail dispatch logs
-│   └── uploads/               # Ticket attachments (Phase 2)
+│   ├── auth.php                # Authentication & role checks
+│   ├── csrf.php                # Synchronizer CSRF tokens
+│   ├── db.php                  # PDO database singleton
+│   ├── events.php              # Status transition engine & notifications
+│   ├── header.php / footer.php # Responsive layout shell
+│   ├── maintenance.php         # Lazy cron-free maintenance engine
+│   ├── permissions.php         # Anonymity & visibility authorization
+│   └── upload.php              # GD image sanitization & EXIF stripping
+├── public/
+│   ├── admin/                  # Overview, complaints, users, master, reports, accountability
+│   ├── staff/                  # Queue & single complaint workspace
+│   ├── student/                # Dashboard, 3-step report, my complaints, profile
+│   ├── api/                    # JSON endpoints (locations, similar, affected, comments)
+│   ├── assets/                 # CSS design system, JS, and WebP vector artwork
+│   └── errors/                 # Hardened 403, 404, 500 error templates
+├── storage/                    # Sanitized uploads & error logs (secured outside web root)
 └── tests/
-    └── test_phase1.php        # Automated test verification suite
+    ├── phase2_tests.php        # Phase 2 suite
+    ├── phase3_tests.php        # Phase 3 suite
+    └── run.php                 # Master CLI test runner (30/30 tests pass)
 ```
-
----
-
-## Exact XAMPP Setup Steps
-
-### Step 1: Clone or Copy Project
-Place the project in your preferred directory (or in `C:\xampp\htdocs\solvex`).
-
-### Step 2: Start Apache and MySQL
-Open the **XAMPP Control Panel** and click **Start** for both **Apache** and **MySQL**.
-
-### Step 3: Configure `config.local.php`
-Copy `config.local.example.php` to `config.local.php`:
-```bash
-cp config.local.example.php config.local.php
-```
-Open `config.local.php` and verify the database credentials:
-```php
-define('DB_HOST', '127.0.0.1');
-define('DB_PORT', 3306);
-define('DB_NAME', 'solvex_report');
-define('DB_USER', 'root');
-define('DB_PASS', '');
-
-// Set to 'log' for local development (emails write to storage/logs/mail.log)
-define('MAIL_MODE', 'log');
-```
-
-### Step 4: Create Database and Import Schema & Seed
-Open your terminal (or phpMyAdmin at `http://localhost/phpmyadmin`):
-```bash
-# Using MySQL CLI:
-mysql -u root -e "CREATE DATABASE IF NOT EXISTS solvex_report CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
-mysql -u root solvex_report < database/schema.sql
-mysql -u root solvex_report < database/seed.sql
-```
-
-### Step 5: Create Super Administrator Account
-Run the CLI provisioning script:
-```bash
-php scripts/create_admin.php
-```
-You will be prompted to enter:
-* **Full Name:** e.g., `System Administrator`
-* **Email:** e.g., `admin@solvexreport.edu`
-* **Staff Code:** e.g., `ADM001`
-* **Password:** e.g., `AdminSecure2024!` (min 8 chars)
-
-*(You can also run non-interactively via flags: `php scripts/create_admin.php --name="Admin" --email="admin@solvex.edu" --code="ADM001" --password="Password123"`) *
-
-### Step 6: Run the Application
-You can run Solvex Report in two ways:
-
-* **Option A: Using PHP Built-in Server (Recommended for instant testing):**
-  ```bash
-  php -S 127.0.0.1:8000 -t public
-  ```
-  Open your browser at: **`http://127.0.0.1:8000/`**
-
-* **Option B: Using XAMPP Apache:**
-  Access: **`http://localhost/solvex/public/`**
-
----
-
-## Running the Automated Test Suite
-
-To verify all security, database integrity, registration, throttling, and CSRF rules:
-```bash
-php tests/test_phase1.php
-```
-All 8 automated tests should report `[PASS]` with full output evidence.
-
----
-
-## Seeded Test Accounts
-
-| Role | Identifier | Default Password | Notes |
-|------|-----------|------------------|-------|
-| **Admin** | `admin@solvexreport.edu` or `ADM001` | *Set during Step 5* | Full administrative access |
-| **Staff (Maintenance)** | `STF-MNT-01` or `rajesh.maintenance@solvexreport.edu` | `StaffPass2024!` | Maintenance Department Staff |
-| **Staff (Electrical)** | `STF-ELE-01` or `suresh.electrical@solvexreport.edu` | `StaffPass2024!` | Electrical Works Staff |
-| **Staff (IT)** | `STF-IT-01` or `priya.it@solvexreport.edu` | `StaffPass2024!` | IT & Network Services Staff |
-| **Sample Students** | `2024CS001` through `2024CS030` | *Register via /register.php* | Listed in `student_master` |

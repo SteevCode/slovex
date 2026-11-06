@@ -1,0 +1,52 @@
+version: '3.8'
+
+services:
+  db:
+    image: mariadb:10.11
+    container_name: solvex_mariadb
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: solvex_report
+      MYSQL_USER: solvex
+      MYSQL_PASSWORD: solvex_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - solvex_db_data:/var/lib/mysql
+      - ./database/schema.sql:/docker-entrypoint-initdb.d/01_schema.sql:ro
+      - ./database/seed.sql:/docker-entrypoint-initdb.d/02_seed.sql:ro
+      - ./database/migrate_phase2.sql:/docker-entrypoint-initdb.d/03_migrate_phase2.sql:ro
+      - ./database/migrate_phase3.sql:/docker-entrypoint-initdb.d/04_migrate_phase3.sql:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: solvex_web
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "8000:80"
+    environment:
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_NAME: solvex_report
+      DB_USER: root
+      DB_PASS: root
+      APP_ENV: local
+    volumes:
+      - ./:/var/www/html
+      - solvex_storage:/var/www/html/storage
+
+volumes:
+  solvex_db_data:
+  solvex_storage:
+

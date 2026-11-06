@@ -95,7 +95,7 @@ CREATE TABLE IF NOT EXISTS `complaints` (
     `gps_accuracy_m`  DECIMAL(8,2)    NULL DEFAULT NULL,
     `visibility`      ENUM('public','private') NOT NULL DEFAULT 'public',
     `priority`        ENUM('critical','high','medium','low') NOT NULL DEFAULT 'medium',
-    `status`          ENUM('submitted','assigned','in_progress','on_hold','resolved','closed','reopened','rejected') NOT NULL DEFAULT 'submitted',
+    `status`          ENUM('submitted','assigned','in_progress','on_hold','resolved','closed','reopened','rejected','duplicate') NOT NULL DEFAULT 'submitted',
     `duplicate_of_id` INT UNSIGNED    NULL DEFAULT NULL,
     `hold_until`      DATE            NULL DEFAULT NULL,
     `created_at`      DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,

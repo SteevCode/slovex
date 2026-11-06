@@ -17,7 +17,9 @@
  * 12. Optimistic concurrency race condition test
  */
 
-define('SOLVEX_ROOT', dirname(__DIR__));
+if (!defined('SOLVEX_ROOT')) {
+    define('SOLVEX_ROOT', dirname(__DIR__));
+}
 require_once SOLVEX_ROOT . '/includes/config.php';
 require_once SOLVEX_ROOT . '/includes/db.php';
 require_once SOLVEX_ROOT . '/includes/helpers.php';
@@ -30,18 +32,20 @@ init_session();
 $pdo = db();
 $results = [];
 
-function assert_test(string $name, bool $condition, string $evidence = ''): void {
-    global $results;
-    $status = $condition ? 'PASS' : 'FAIL';
-    $results[] = [
-        'name'     => $name,
-        'status'   => $status,
-        'evidence' => $evidence,
-    ];
-    $icon = $condition ? '✅' : '❌';
-    echo "{$icon} [{$status}] {$name}\n";
-    if ($evidence) {
-        echo "   Evidence: {$evidence}\n";
+if (!function_exists('assert_test')) {
+    function assert_test(string $name, bool $condition, string $evidence = ''): void {
+        global $results;
+        $status = $condition ? 'PASS' : 'FAIL';
+        $results[] = [
+            'name'     => $name,
+            'status'   => $status,
+            'evidence' => $evidence,
+        ];
+        $icon = $condition ? '✅' : '❌';
+        echo "{$icon} [{$status}] {$name}\n";
+        if ($evidence) {
+            echo "   Evidence: {$evidence}\n";
+        }
     }
 }
 
@@ -76,7 +80,15 @@ if (!$studentB) {
 echo "Running Test 1: Private Complaint Isolation (404 for non-owners)...\n";
 // Create private complaint for Student A
 $refA = 'SVX-TEST-PRIV01';
-$pdo->prepare("DELETE FROM complaints WHERE reference = ?")->execute([$refA]);
+$prevComp = $pdo->query("SELECT id FROM complaints WHERE reference = '{$refA}'")->fetch();
+if ($prevComp) {
+    $pdo->prepare("DELETE FROM complaint_images WHERE complaint_id = ?")->execute([$prevComp['id']]);
+    $pdo->prepare("DELETE FROM complaint_events WHERE complaint_id = ?")->execute([$prevComp['id']]);
+    $pdo->prepare("DELETE FROM comments WHERE complaint_id = ?")->execute([$prevComp['id']]);
+    $pdo->prepare("DELETE FROM notifications WHERE complaint_id = ?")->execute([$prevComp['id']]);
+    $pdo->prepare("DELETE FROM affected WHERE complaint_id = ?")->execute([$prevComp['id']]);
+    $pdo->prepare("DELETE FROM complaints WHERE id = ?")->execute([$prevComp['id']]);
+}
 $insA = $pdo->prepare("
     INSERT INTO complaints (reference, student_id, title, description, category_id, department_id, visibility, priority, status, created_at, updated_at)
     VALUES (?, ?, 'Private Hostel Room Broken Lock', 'My room lock is broken', 8, 5, 'private', 'high', 'submitted', NOW(), NOW())
@@ -370,7 +382,15 @@ assert_test(
 echo "\nRunning Test 9: Similar Open Complaint Matching...\n";
 // Insert an open complaint in category 4 (Internet / Wi-Fi) at location 1
 $refSim = 'SVX-TEST-SIM001';
-$pdo->prepare("DELETE FROM complaints WHERE reference = ?")->execute([$refSim]);
+$prevSim = $pdo->query("SELECT id FROM complaints WHERE reference = '{$refSim}'")->fetch();
+if ($prevSim) {
+    $pdo->prepare("DELETE FROM affected WHERE complaint_id = ?")->execute([$prevSim['id']]);
+    $pdo->prepare("DELETE FROM complaint_images WHERE complaint_id = ?")->execute([$prevSim['id']]);
+    $pdo->prepare("DELETE FROM complaint_events WHERE complaint_id = ?")->execute([$prevSim['id']]);
+    $pdo->prepare("DELETE FROM comments WHERE complaint_id = ?")->execute([$prevSim['id']]);
+    $pdo->prepare("DELETE FROM notifications WHERE complaint_id = ?")->execute([$prevSim['id']]);
+    $pdo->prepare("DELETE FROM complaints WHERE id = ?")->execute([$prevSim['id']]);
+}
 $pdo->prepare("
     INSERT INTO complaints (reference, student_id, title, description, category_id, location_id, department_id, visibility, priority, status, created_at, updated_at)
     VALUES (?, ?, 'Wi-Fi completely down in library', 'Cannot connect to campus AP', 4, 1, 3, 'public', 'high', 'submitted', NOW(), NOW())
@@ -429,7 +449,15 @@ assert_test(
 // ── TEST 11: Accept Resolution and Reopen Lifecycle ──────────
 echo "\nRunning Test 11: Accept Resolution (closed_by=student) & Reopen...\n";
 $refLifecycle = 'SVX-TEST-LIFE01';
-$pdo->prepare("DELETE FROM complaints WHERE reference = ?")->execute([$refLifecycle]);
+$prevLife = $pdo->query("SELECT id FROM complaints WHERE reference = '{$refLifecycle}'")->fetch();
+if ($prevLife) {
+    $pdo->prepare("DELETE FROM affected WHERE complaint_id = ?")->execute([$prevLife['id']]);
+    $pdo->prepare("DELETE FROM complaint_images WHERE complaint_id = ?")->execute([$prevLife['id']]);
+    $pdo->prepare("DELETE FROM complaint_events WHERE complaint_id = ?")->execute([$prevLife['id']]);
+    $pdo->prepare("DELETE FROM comments WHERE complaint_id = ?")->execute([$prevLife['id']]);
+    $pdo->prepare("DELETE FROM notifications WHERE complaint_id = ?")->execute([$prevLife['id']]);
+    $pdo->prepare("DELETE FROM complaints WHERE id = ?")->execute([$prevLife['id']]);
+}
 $pdo->prepare("
     INSERT INTO complaints (reference, student_id, title, description, category_id, department_id, visibility, priority, status, created_at, updated_at)
     VALUES (?, ?, 'Water Filter Servicing', 'Filter issue', 1, 1, 'public', 'medium', 'resolved', NOW(), NOW())
@@ -438,7 +466,7 @@ $lifeId = (int)$pdo->lastInsertId();
 
 // Initial event
 add_event($lifeId, $studentA['id'], 'created', null, 'submitted');
-add_event($lifeId, 999, 'status_change', 'submitted', 'resolved', 'Filter cartridge replaced');
+add_event($lifeId, null, 'status_change', 'submitted', 'resolved', 'Filter cartridge replaced');
 
 // 11a. Reopen without note must fail
 $failReopen = change_status($lifeId, 'reopened', $studentA, '');
@@ -467,7 +495,15 @@ assert_test(
 // ── TEST 12: Concurrent Status Changes (Race Condition) ─────
 echo "\nRunning Test 12: Optimistic Concurrency Race Condition...\n";
 $refRace = 'SVX-TEST-RACE01';
-$pdo->prepare("DELETE FROM complaints WHERE reference = ?")->execute([$refRace]);
+$prevRace = $pdo->query("SELECT id FROM complaints WHERE reference = '{$refRace}'")->fetch();
+if ($prevRace) {
+    $pdo->prepare("DELETE FROM affected WHERE complaint_id = ?")->execute([$prevRace['id']]);
+    $pdo->prepare("DELETE FROM complaint_images WHERE complaint_id = ?")->execute([$prevRace['id']]);
+    $pdo->prepare("DELETE FROM complaint_events WHERE complaint_id = ?")->execute([$prevRace['id']]);
+    $pdo->prepare("DELETE FROM comments WHERE complaint_id = ?")->execute([$prevRace['id']]);
+    $pdo->prepare("DELETE FROM notifications WHERE complaint_id = ?")->execute([$prevRace['id']]);
+    $pdo->prepare("DELETE FROM complaints WHERE id = ?")->execute([$prevRace['id']]);
+}
 $pdo->prepare("
     INSERT INTO complaints (reference, student_id, title, description, category_id, department_id, visibility, priority, status, created_at, updated_at)
     VALUES (?, ?, 'Race Condition Test', 'Testing concurrency', 1, 1, 'public', 'medium', 'submitted', NOW(), NOW())

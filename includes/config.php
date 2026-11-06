@@ -14,7 +14,12 @@ if (!defined('SOLVEX_ROOT')) {
 // Load local config (credentials, environment)
 $localConfig = SOLVEX_ROOT . '/config.local.php';
 if (!file_exists($localConfig)) {
-    die('config.local.php not found. Copy config.local.example.php and configure it.');
+    $exampleConfig = SOLVEX_ROOT . '/config.local.example.php';
+    if (file_exists($exampleConfig)) {
+        copy($exampleConfig, $localConfig);
+    } else {
+        die('Configuration file missing and config.local.example.php not found.');
+    }
 }
 require_once $localConfig;
 

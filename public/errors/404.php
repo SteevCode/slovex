@@ -1,38 +1,33 @@
 <?php
 /**
- * 404 Not Found Error Page
+ * Solvex Report — 404 Page Not Found
  */
-if (!defined('SOLVEX_ROOT')) {
-    define('SOLVEX_ROOT', dirname(__DIR__, 2));
-}
-
-require_once SOLVEX_ROOT . '/includes/config.php';
-require_once SOLVEX_ROOT . '/includes/helpers.php';
-require_once SOLVEX_ROOT . '/includes/auth.php';
-
 http_response_code(404);
 $pageTitle = '404 Page Not Found';
-require_once SOLVEX_ROOT . '/includes/header.php';
 ?>
-
-<div class="error-page">
-    <div class="container text-center">
-        <div class="error-code text-primary">404</div>
-        <h2 class="display-6 fw-bold">Page Not Found</h2>
-        <p class="lead text-muted mx-auto" style="max-width: 500px;">
-            The requested page or ticket record could not be found or may have been moved.
-        </p>
-        <div class="d-flex justify-content-center gap-3">
-            <a href="<?= base_url() ?>" class="btn-solvex btn-secondary">
-                <i class="bi bi-house-door me-1"></i> Return Home
-            </a>
-            <?php if (is_logged_in()): ?>
-                <a href="<?= role_home($_SESSION['user_role'] ?? 'student') ?>" class="btn-solvex btn-primary">
-                    <i class="bi bi-speedometer2 me-1"></i> My Dashboard
-                </a>
-            <?php endif; ?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 — Not Found — Solvex Report</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #F8FAFC; color: #0B2545; }
+        .error-card { max-width: 540px; margin: 80px auto; background: #fff; border-radius: 16px; padding: 40px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); text-align: center; }
+        .btn-teal { background-color: #0E9F8E; color: #fff; border-radius: 8px; padding: 10px 24px; text-decoration: none; font-weight: 600; display: inline-block; }
+        .btn-teal:hover { background-color: #0b8072; color: #fff; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="error-card">
+            <img src="/assets/img/error-404.webp" alt="404 Not Found" width="220" height="154" class="mb-4">
+            <h1 class="h3 fw-bold mb-2">404 &mdash; Page Not Found</h1>
+            <p class="text-secondary small mb-4">The ticket, resource, or page you requested does not exist, has been archived, or is restricted under campus privacy policies.</p>
+            <a href="/" class="btn-teal"><i class="bi bi-house-door me-1"></i> Return to Campus Homepage</a>
         </div>
     </div>
-</div>
-
-<?php require_once SOLVEX_ROOT . '/includes/footer.php'; ?>
+</body>
+</html>

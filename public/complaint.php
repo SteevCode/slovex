@@ -494,7 +494,10 @@ require_once SOLVEX_ROOT . '/includes/header.php';
                     <ul class="list-unstyled d-flex flex-column gap-3 mb-0 small">
                         <li class="d-flex justify-content-between align-items-center pb-2 border-bottom">
                             <span class="text-muted">Category</span>
-                            <span class="fw-semibold text-navy"><i class="bi <?= e($complaint['category_icon']) ?> me-1 text-primary"></i> <?= e($complaint['category_name']) ?></span>
+                            <span class="fw-semibold text-navy d-inline-flex align-items-center gap-1">
+                                <span class="text-primary"><?= category_icon_svg($complaint['category_icon'] ?? (int)($complaint['category_id'] ?? 1), 16) ?></span>
+                                <?= e($complaint['category_name']) ?>
+                            </span>
                         </li>
                         <li class="d-flex justify-content-between align-items-center pb-2 border-bottom">
                             <span class="text-muted">Department</span>

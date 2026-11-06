@@ -115,7 +115,7 @@ function get_transition_matrix(): array
         ],
         'rejected' => [
             'reopened' => [
-                'roles'          => ['admin'],
+                'roles'          => ['admin', 'student'], // student = appeal once
                 'require_reason' => true,
             ],
         ],
@@ -197,6 +197,21 @@ function change_status(int $complaintId, string $newStatus, array $actor, ?strin
                 'message' => 'Staff members can only update complaints within their own department.'
             ];
         }
+
+        // On-hold >7 days requires admin approval (staff cannot extend beyond)
+        // If the complaint already has a 'hold_overdue' event, staff cannot put it back on hold
+        if ($newStatus === 'on_hold') {
+            $overduCheck = $pdo->prepare(
+                "SELECT COUNT(*) FROM complaint_events WHERE complaint_id = ? AND type = 'hold_overdue'"
+            );
+            $overduCheck->execute([$complaintId]);
+            if ((int) $overduCheck->fetchColumn() > 0) {
+                return [
+                    'success' => false,
+                    'message' => 'This complaint has exceeded its on-hold period. Only an admin can approve further hold extension.'
+                ];
+            }
+        }
     }
 
     // Reason requirement check
@@ -230,6 +245,15 @@ function change_status(int $complaintId, string $newStatus, array $actor, ?strin
             $updateFields[] = 'resolved_at = NULL';
             $updateFields[] = 'closed_at = NULL';
             $updateFields[] = 'closed_by = NULL';
+            $updateFields[] = 'hold_until = NULL';
+        } elseif ($newStatus === 'on_hold') {
+            // Actor may pass hold_until via actor array (staff complaint page sets this)
+            if (!empty($actor['hold_until'])) {
+                $updateFields[]       = 'hold_until = :hold_until';
+                $params['hold_until'] = $actor['hold_until'];
+            }
+        } elseif ($newStatus === 'rejected' || $newStatus === 'duplicate') {
+            $updateFields[] = 'hold_until = NULL';
         }
 
         $sql = 'UPDATE complaints SET ' . implode(', ', $updateFields) . ' WHERE id = :complaint_id AND status = :curr_status';
@@ -263,17 +287,20 @@ function change_status(int $complaintId, string $newStatus, array $actor, ?strin
         $formattedRef = $complaint['reference'];
 
         if ($actorRole === 'student') {
-            // Student accepted or reopened -> notify staff / department
+            // Student accepted or reopened -> notify assigned staff / department + admins
             $notifMsg = ($newStatus === 'closed')
                 ? "Student confirmed resolution for #{$formattedRef}."
                 : "Student reopened complaint #{$formattedRef}: \"{$trimmedReason}\"";
 
-            // If an individual staff member is assigned, notify them
             if (!empty($complaint['assigned_to'])) {
                 add_notification((int) $complaint['assigned_to'], $complaintId, $notifMsg);
             } else {
-                // Otherwise notify department staff / head
                 notify_department_staff((int) $complaint['department_id'], $complaintId, $notifMsg);
+            }
+
+            // Reopen also notifies all admins
+            if ($newStatus === 'reopened') {
+                notify_all_admins_event($complaintId, "Complaint #{$formattedRef} was reopened by the student.");
             }
         } else {
             // Staff or Admin updated status -> notify reporting student
@@ -283,6 +310,17 @@ function change_status(int $complaintId, string $newStatus, array $actor, ?strin
                 $notifMsg .= " Note: {$trimmedReason}";
             }
             add_notification($ownerId, $complaintId, $notifMsg);
+
+            // Reopen by staff: also notify all admins
+            if ($newStatus === 'reopened') {
+                notify_all_admins_event($complaintId, "Complaint #{$formattedRef} was reopened by staff.");
+            }
+        }
+
+        // 6. Critical priority escalation: notify all admins immediately on submission or escalation
+        // (Caller may pass priority in the complaint array for this check)
+        if (!empty($complaint['priority']) && $complaint['priority'] === 'critical' && in_array($newStatus, ['submitted', 'assigned', 'in_progress'], true)) {
+            notify_all_admins_event($complaintId, "[CRITICAL] Complaint #{$formattedRef} requires immediate attention.");
         }
 
         $pdo->commit();
@@ -339,6 +377,18 @@ function add_notification(int $userId, ?int $complaintId, string $message): void
          VALUES (?, ?, ?, 0, NOW())'
     );
     $stmt->execute([$userId, $complaintId, $message]);
+}
+
+/**
+ * Notify all active admin users (used for critical/reopen escalation).
+ */
+function notify_all_admins_event(int $complaintId, string $message): void
+{
+    $pdo  = db();
+    $stmt = $pdo->query("SELECT id FROM users WHERE role = 'admin' AND status = 'active'");
+    foreach ($stmt->fetchAll(PDO::FETCH_COLUMN) as $adminId) {
+        add_notification((int) $adminId, $complaintId, $message);
+    }
 }
 
 /**

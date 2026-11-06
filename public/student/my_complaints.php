@@ -176,9 +176,7 @@ require_once SOLVEX_ROOT . '/includes/header.php';
     <!-- Complaints Cards / Feed -->
     <?php if (empty($complaints)): ?>
         <div class="card-solvex border-0 shadow-sm p-5 text-center">
-            <div class="empty-icon mx-auto mb-3">
-                <i class="bi bi-search fs-2 text-muted"></i>
-            </div>
+            <img src="<?= asset_url('img/empty-no-results.webp') ?>" alt="No complaints found" width="160" height="120" class="mb-3" loading="lazy">
             <h4 class="h5 fw-bold text-navy">No complaints found</h4>
             <p class="text-muted small">Try broadening your search term or tab filter.</p>
             <a href="<?= base_url('student/report.php') ?>" class="btn-solvex btn-primary mx-auto mt-2">

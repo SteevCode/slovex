@@ -179,9 +179,7 @@ require_once SOLVEX_ROOT . '/includes/header.php';
     <!-- Complaint Cards Grid (FixMyStreet / SeeClickFix Inspired) -->
     <?php if (empty($complaints)): ?>
         <div class="card-solvex border-0 shadow-sm p-5 text-center">
-            <div class="empty-icon mx-auto mb-3">
-                <i class="bi bi-inbox fs-2 text-muted"></i>
-            </div>
+            <img src="<?= asset_url('img/empty-no-results.webp') ?>" alt="No public complaints found" width="160" height="120" class="mb-3" loading="lazy">
             <h4 class="h5 fw-bold text-navy">No public complaints found</h4>
             <p class="text-muted small">No issues match your current filter settings.</p>
             <a href="<?= base_url('feed.php') ?>" class="btn-solvex btn-secondary mx-auto mt-2">
@@ -208,7 +206,7 @@ require_once SOLVEX_ROOT . '/includes/header.php';
                                 <img src="<?= base_url('image.php?id=' . (int)$comp['thumb_image_id'] . '&thumb=1') ?>" alt="<?= e($comp['title']) ?>" class="w-100 h-100 object-fit-cover">
                             <?php else: ?>
                                 <div class="w-100 h-100 d-flex align-items-center justify-content-center text-muted bg-neutral-100">
-                                    <i class="bi <?= e($comp['category_icon']) ?> display-4 text-primary opacity-50"></i>
+                                    <?= category_icon_svg($comp['category_icon'] ?? (int)($comp['category_id'] ?? 1), 48, 'text-primary opacity-50') ?>
                                 </div>
                             <?php endif; ?>
 
@@ -245,7 +243,7 @@ require_once SOLVEX_ROOT . '/includes/header.php';
                             </p>
 
                             <div class="d-flex align-items-center justify-content-between pt-2 border-top text-muted small mt-auto" style="font-size: 0.75rem;">
-                                <span><i class="bi <?= e($comp['category_icon']) ?> me-1 text-primary"></i> <?= e($comp['category_name']) ?></span>
+                                <span class="d-inline-flex align-items-center"><span class="me-1 text-primary"><?= category_icon_svg($comp['category_icon'] ?? (int)($comp['category_id'] ?? 1), 16) ?></span> <?= e($comp['category_name']) ?></span>
                                 <span class="text-truncate" style="max-width: 140px;"><i class="bi bi-geo-alt me-1"></i> <?= e($comp['location_name'] ?? 'Main Campus') ?></span>
                             </div>
 

@@ -79,9 +79,7 @@ require_once SOLVEX_ROOT . '/includes/header.php';
                 <div class="card-body p-0">
                     <?php if (empty($notifications)): ?>
                         <div class="empty-state py-5 text-center">
-                            <div class="empty-icon mx-auto mb-3">
-                                <i class="bi bi-bell-slash fs-2 text-muted"></i>
-                            </div>
+                            <img src="<?= asset_url('img/empty-no-notifications.webp') ?>" alt="No notifications" width="160" height="120" class="mb-3" loading="lazy">
                             <h4 class="h5 fw-bold text-navy">No notifications</h4>
                             <p class="text-muted small">You will receive notifications when department staff updates your complaint.</p>
                         </div>

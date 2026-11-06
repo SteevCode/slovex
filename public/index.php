@@ -67,35 +67,34 @@ try {
             </div>
 
             <div class="col-lg-5 d-none d-lg-block">
-                <div class="card-solvex shadow-lg border-0 bg-white text-dark p-4 rounded-4 position-relative">
-                    <div class="d-flex align-items-center justify-content-between pb-3 mb-3 border-bottom">
-                        <div class="d-flex align-items-center gap-2">
-                            <span class="badge bg-primary-subtle text-primary fw-bold">SVX-2024-00142</span>
-                            <span class="status-pill in_progress">In Progress</span>
+                <div class="position-relative">
+                    <img src="<?= asset_url('img/hero.webp') ?>" alt="Solvex Report Campus Operations" class="img-fluid rounded-4 shadow-sm mb-3 border border-light" width="560" height="320" loading="eager">
+                    <div class="card-solvex shadow-lg border-0 bg-white text-dark p-3 rounded-4 position-relative">
+                        <div class="d-flex align-items-center justify-content-between pb-2 mb-2 border-bottom">
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="badge bg-primary-subtle text-primary fw-bold">SVX-2024-00142</span>
+                                <span class="status-pill in_progress">In Progress</span>
+                            </div>
+                            <span class="days-chip warning">
+                                <i class="bi bi-clock-history"></i> Open 2 days
+                            </span>
                         </div>
-                        <span class="days-chip warning">
-                            <i class="bi bi-clock-history"></i> Open 2 days
-                        </span>
-                    </div>
-                    
-                    <h5 class="fw-bold text-navy mb-2">Water cooler leaking & low pressure</h5>
-                    <p class="small text-muted mb-3">Academic Block 2 &bull; 3rd Floor East Wing &bull; Near Physics Lab 4</p>
-                    
-                    <div class="d-flex align-items-center justify-content-between p-2 rounded-3 bg-light mb-3">
-                        <div class="small text-secondary">
-                            <i class="bi bi-building me-1"></i> Dept: <strong>Maintenance & Civil</strong>
+                        
+                        <h6 class="fw-bold text-navy mb-1">Water cooler leaking & low pressure</h6>
+                        <p class="small text-muted mb-2">Academic Block 2 &bull; 3rd Floor East Wing</p>
+                        
+                        <div class="d-flex align-items-center justify-content-between p-2 rounded-2 bg-light mb-2">
+                            <div class="small text-secondary">
+                                <i class="bi bi-building me-1"></i> Dept: <strong>Maintenance & Civil</strong>
+                            </div>
+                            <span class="priority-tag medium">Medium</span>
                         </div>
-                        <span class="priority-tag medium">Medium</span>
-                    </div>
 
-                    <div class="timeline mt-3 pt-2">
-                        <div class="timeline-item active">
-                            <div class="timeline-time">Today, 10:15 AM</div>
-                            <div class="timeline-content fw-semibold">Plumber dispatched with replacement copper valve</div>
-                        </div>
-                        <div class="timeline-item">
-                            <div class="timeline-time">Yesterday, 04:30 PM</div>
-                            <div class="timeline-content text-muted">Ticket verified & assigned by Maintenance Desk</div>
+                        <div class="timeline mt-2 pt-1" style="font-size: 0.8rem;">
+                            <div class="timeline-item active">
+                                <div class="timeline-time">Today, 10:15 AM</div>
+                                <div class="timeline-content fw-semibold">Plumber dispatched with replacement copper valve</div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -154,8 +153,8 @@ try {
             <!-- Step 1 -->
             <div class="step-card">
                 <div class="step-number">1</div>
-                <div class="step-icon">
-                    <i class="bi bi-camera-fill"></i>
+                <div class="step-icon mb-3">
+                    <img src="<?= asset_url('img/how-report.webp') ?>" alt="Spot and report issue" width="72" height="72" loading="lazy">
                 </div>
                 <h3>Spot &amp; Report</h3>
                 <p>
@@ -166,8 +165,8 @@ try {
             <!-- Step 2 -->
             <div class="step-card">
                 <div class="step-number">2</div>
-                <div class="step-icon">
-                    <i class="bi bi-hourglass-split"></i>
+                <div class="step-icon mb-3">
+                    <img src="<?= asset_url('img/how-track.webp') ?>" alt="Public ageing and triage" width="72" height="72" loading="lazy">
                 </div>
                 <h3>Public Ageing &amp; Triage</h3>
                 <p>
@@ -178,8 +177,8 @@ try {
             <!-- Step 3 -->
             <div class="step-card">
                 <div class="step-number">3</div>
-                <div class="step-icon">
-                    <i class="bi bi-check-all"></i>
+                <div class="step-icon mb-3">
+                    <img src="<?= asset_url('img/how-resolved.webp') ?>" alt="Resolve and verify fix" width="72" height="72" loading="lazy">
                 </div>
                 <h3>Resolve &amp; Verify</h3>
                 <p>

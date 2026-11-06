@@ -1,0 +1,22 @@
+{
+  "name": "solvex/report",
+  "description": "Solvex Report — Campus Incident Resolution and Civic Accountability System",
+  "type": "project",
+  "license": "MIT",
+  "require": {
+    "php": ">=8.2",
+    "ext-pdo": "*",
+    "ext-pdo_mysql": "*",
+    "ext-gd": "*",
+    "ext-fileinfo": "*",
+    "ext-exif": "*",
+    "ext-mbstring": "*",
+    "ext-json": "*"
+  },
+  "scripts": {
+    "start": "php -S 127.0.0.1:8000 router.php",
+    "test": "php tests/run.php",
+    "seed": "php database/demo_seed.php --reset"
+  }
+}
+

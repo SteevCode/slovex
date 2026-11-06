@@ -348,8 +348,8 @@ require_once SOLVEX_ROOT . '/includes/header.php';
                                              style="cursor: pointer;">
                                             <div class="d-flex align-items-center justify-content-between mb-2">
                                                 <div class="d-flex align-items-center gap-2">
-                                                    <div class="category-icon-box rounded-2 p-2 bg-light text-primary">
-                                                        <i class="bi <?= e($cat['icon']) ?> fs-5"></i>
+                                                    <div class="category-icon-box rounded-2 p-2 bg-light text-primary d-inline-flex align-items-center justify-content-center" style="width: 38px; height: 38px;">
+                                                        <?= category_icon_svg((int)$cat['id'], 20) ?>
                                                     </div>
                                                     <span class="fw-bold text-navy"><?= e($cat['name']) ?></span>
                                                 </div>

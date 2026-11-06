@@ -1235,6 +1235,42 @@ a:hover {
     border: 1px solid var(--clr-border-light);
 }
 
+.auth-split-layout {
+    display: flex;
+    max-width: 980px;
+    width: 100%;
+    background: var(--clr-surface);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-xl);
+    border: 1px solid var(--clr-border-light);
+    overflow: hidden;
+}
+
+.auth-split-layout .auth-side {
+    flex: 1;
+    background: linear-gradient(145deg, #093B3B 0%, #0E9F8E 100%);
+    color: #ffffff;
+    padding: var(--sp-10) var(--sp-8);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.auth-split-layout .auth-main {
+    flex: 1.2;
+    padding: var(--sp-10) var(--sp-8);
+    background: var(--clr-surface);
+}
+
+@media (max-width: 860px) {
+    .auth-split-layout {
+        max-width: 480px;
+    }
+    .auth-split-layout .auth-side {
+        display: none !important;
+    }
+}
+
 .auth-card .auth-logo {
     text-align: center;
     margin-bottom: var(--sp-8);

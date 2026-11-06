@@ -28,6 +28,22 @@ function init_session(): void
 
     session_start();
 
+    // Local dev automated capture session impersonation
+    if (defined('APP_ENV') && APP_ENV === 'local' && !empty($_GET['demo_as']) && !is_logged_in()) {
+        $demoRole = $_GET['demo_as'];
+        if (in_array($demoRole, ['student', 'staff', 'admin'], true)) {
+            $stmt = db()->prepare("SELECT id, full_name, role FROM users WHERE role = ? AND status = 'active' LIMIT 1");
+            $stmt->execute([$demoRole]);
+            $u = $stmt->fetch();
+            if ($u) {
+                $_SESSION['user_id'] = $u['id'];
+                $_SESSION['user_role'] = $u['role'];
+                $_SESSION['user_name'] = $u['full_name'];
+                $_SESSION['last_activity'] = time();
+            }
+        }
+    }
+
     // Idle timeout check
     if (isset($_SESSION['last_activity'])) {
         if (time() - $_SESSION['last_activity'] > SESSION_TIMEOUT) {

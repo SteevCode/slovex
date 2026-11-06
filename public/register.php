@@ -82,15 +82,34 @@ require_once SOLVEX_ROOT . '/includes/header.php';
 ?>
 
 <div class="auth-wrapper py-5">
-    <div class="auth-card" style="max-width: 520px;">
-        <div class="auth-logo">
-            <a href="<?= base_url() ?>" aria-label="Solvex Report Home">
-                <img src="<?= asset_url('img/logo-full.svg') ?>" alt="Solvex Report" height="44">
-            </a>
+    <div class="auth-split-layout">
+        <div class="auth-side">
+            <div>
+                <a href="<?= base_url() ?>" class="d-inline-block mb-4 text-white text-decoration-none">
+                    <img src="<?= asset_url('img/logo-light.svg') ?>" alt="Solvex Report" height="38">
+                </a>
+                <h2 class="h3 fw-bold text-white mb-3">Join Your Campus Community</h2>
+                <p class="text-white-50 small mb-4">
+                    Register with your official student registration number to report issues, vote on urgent fixes, and track repairs.
+                </p>
+                <div class="mb-4">
+                    <img src="<?= asset_url('img/auth-side.webp') ?>" alt="Solvex Campus" class="img-fluid rounded-3 shadow-sm border border-light border-opacity-25" width="400" height="240" loading="eager">
+                </div>
+            </div>
+            <div class="pt-3 border-top border-light border-opacity-25 small text-white-50">
+                <i class="bi bi-shield-check text-warning me-1"></i> Verified student credentials safeguard campus integrity.
+            </div>
         </div>
 
-        <h1 class="auth-title h3 fw-bold">Student Registration</h1>
-        <p class="auth-subtitle">Verify your student identity to report and track issues</p>
+        <div class="auth-main">
+            <div class="auth-logo d-md-none text-center mb-4">
+                <a href="<?= base_url() ?>" aria-label="Solvex Report Home">
+                    <img src="<?= asset_url('img/logo-full.svg') ?>" alt="Solvex Report" height="40">
+                </a>
+            </div>
+
+            <h1 class="h3 fw-bold text-navy mb-1">Student Registration</h1>
+            <p class="text-muted small mb-4">Verify your student identity to report and track issues</p>
 
         <?php if ($success): ?>
             <div class="alert-solvex success" role="alert">
@@ -278,6 +297,7 @@ require_once SOLVEX_ROOT . '/includes/header.php';
                 </a>
             </div>
         <?php endif; ?>
+        </div>
     </div>
 </div>
 

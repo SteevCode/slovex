@@ -26,3 +26,7 @@ desktop.ini
 
 # PHP
 *.cache
+
+# Python
+__pycache__/
+*.pyc

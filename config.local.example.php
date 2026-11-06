@@ -7,8 +7,20 @@
 // Environment: 'local' or 'production'
 define('APP_ENV', 'local');
 
-// Base URL (no trailing slash)
-define('BASE_URL', 'http://localhost/solvex');
+// Base URL (smart detection for both php -S and XAMPP/Apache subdirectories)
+if (!empty($_SERVER['HTTP_HOST'])) {
+    $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https://' : 'http://';
+    $host = $_SERVER['HTTP_HOST'];
+    $scriptDir = trim(str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME'] ?? '')), '/');
+    $subDir = '';
+    if ($scriptDir && $scriptDir !== '.' && $scriptDir !== 'public') {
+        $parts = explode('/', $scriptDir);
+        $subDir = '/' . $parts[0];
+    }
+    define('BASE_URL', $scheme . $host . $subDir);
+} else {
+    define('BASE_URL', 'http://127.0.0.1:8000');
+}
 
 // Database
 define('DB_HOST', '127.0.0.1');

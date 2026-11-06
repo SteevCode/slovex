@@ -50,7 +50,7 @@ function can_view_complaint(?array $user, array $complaint): bool
         static $catSensitiveCache = [];
         $catId = (int) $complaint['category_id'];
         if (!isset($catSensitiveCache[$catId])) {
-            $stmt = db()->prepare('SELECT sensitive FROM categories WHERE id = ?');
+            $stmt = db()->prepare('SELECT `sensitive` FROM `categories` WHERE `id` = ?');
             $stmt->execute([$catId]);
             $catSensitiveCache[$catId] = (bool) $stmt->fetchColumn();
         }

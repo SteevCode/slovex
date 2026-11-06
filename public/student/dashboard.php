@@ -221,12 +221,10 @@ require_once SOLVEX_ROOT . '/includes/header.php';
 
         <div class="card-body p-0">
             <?php if (empty($recentComplaints)): ?>
-                <div class="empty-state py-5">
-                    <div class="empty-icon">
-                        <i class="bi bi-inbox"></i>
-                    </div>
-                    <h3>No complaints reported yet</h3>
-                    <p class="text-muted">Notice any broken furniture, leaking tap, or Wi-Fi outage? Report it directly to get it fixed.</p>
+                <div class="empty-state py-5 text-center">
+                    <img src="<?= asset_url('img/empty-no-complaints.webp') ?>" alt="No complaints reported" width="160" height="120" class="mb-3" loading="lazy">
+                    <h3 class="h5 fw-bold text-navy">No complaints reported yet</h3>
+                    <p class="text-muted small">Notice any broken furniture, leaking tap, or Wi-Fi outage? Report it directly to get it fixed.</p>
                     <a href="<?= base_url('student/report.php') ?>" class="btn-solvex btn-primary mt-2">
                         <i class="bi bi-plus-lg me-1"></i> Report Your First Problem
                     </a>
