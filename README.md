@@ -109,7 +109,7 @@ Verify zero XSS escaping gaps, direct SQL concatenations, or CSRF bypasses acros
 & "C:\xampp\php\php.exe" scripts/lint_security.php
 ```
 
----
+---***
 
 ## 📁 Project Directory Structure
 
