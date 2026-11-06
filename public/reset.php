@@ -57,7 +57,6 @@ if (is_post() && $tokenOk) {
 }
 
 $pageTitle = 'Reset Password';
-$bodyClass = 'bg-light';
 require_once SOLVEX_ROOT . '/includes/header.php';
 ?>
 

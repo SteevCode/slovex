@@ -26,7 +26,6 @@ if (empty($token)) {
 }
 
 $pageTitle = $verified ? 'Account Activated' : 'Verification Issue';
-$bodyClass = 'bg-light';
 require_once SOLVEX_ROOT . '/includes/header.php';
 ?>
 

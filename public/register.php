@@ -77,7 +77,6 @@ if (is_post()) {
 }
 
 $pageTitle = 'Student Registration';
-$bodyClass = 'bg-light';
 require_once SOLVEX_ROOT . '/includes/header.php';
 ?>
 
@@ -85,19 +84,22 @@ require_once SOLVEX_ROOT . '/includes/header.php';
     <div class="auth-split-layout">
         <div class="auth-side">
             <div>
-                <a href="<?= base_url() ?>" class="d-inline-block mb-4 text-white text-decoration-none">
-                    <img src="<?= asset_url('img/logo-with-text.png') ?>" alt="Solvex Report" height="42" class="mb-2" style="filter: brightness(1.2);">
+                <a href="<?= base_url() ?>" class="d-inline-block mb-3 text-decoration-none">
+                    <img src="<?= asset_url('img/logo-with-text.png') ?>" alt="Solvex Report" height="36">
                 </a>
-                <h2 class="h3 fw-bold text-white mb-3">Join Your Campus Community</h2>
-                <p class="text-white-50 small mb-4">
-                    Register with your official student registration number to report issues, vote on urgent fixes, and track repairs.
+                <h2 class="h5 fw-bold mb-2">Student Registry</h2>
+                <p class="text-secondary small mb-4">
+                    Register with your institutional register number to submit complaints and verify facility repairs.
                 </p>
-                <div class="mb-4">
-                    <img src="<?= asset_url('img/auth-side.webp') ?>" alt="Solvex Campus" class="img-fluid rounded-3 shadow-sm border border-light border-opacity-25" width="400" height="240" loading="eager">
+                <div class="border rounded p-3 bg-white mb-3 small">
+                    <div class="fw-semibold mb-2">Registration Rules:</div>
+                    <div class="text-secondary mb-1">&bull; Your register number must be listed in the college directory.</div>
+                    <div class="text-secondary mb-1">&bull; A verification link is sent to activate your account.</div>
+                    <div class="text-secondary">&bull; Demo numbers: <code>2024CS100</code> to <code>2024CS130</code>.</div>
                 </div>
             </div>
-            <div class="pt-3 border-top border-light border-opacity-25 small text-white-50">
-                <i class="bi bi-shield-check text-warning me-1"></i> Verified student credentials safeguard campus integrity.
+            <div class="pt-3 border-top small text-secondary">
+                Helpdesk Support: <strong>helpdesk@solvexreport.edu</strong>
             </div>
         </div>
 

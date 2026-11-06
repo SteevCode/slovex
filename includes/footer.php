@@ -19,25 +19,24 @@
             <div class="row g-4 mt-2">
                 <!-- Brand Summary -->
                 <div class="col-lg-4 col-md-6">
-                    <img src="<?= asset_url('img/logo-with-text.png') ?>" alt="Solvex Report" height="34" class="mb-3" style="filter: brightness(1.2);">
+                    <img src="<?= asset_url('img/logo-with-text.png') ?>" alt="Solvex Report" height="34" class="mb-3">
                     <p class="text-secondary small mb-3">
-                        Civic problem reporting and accountable resolution system for college campuses and hostels. 
-                        Every complaint carries a public ageing counter and an immutable audit timeline.
+                        Campus problem reporting, department triage, and transparent resolution tracking for hostel and academic facilities.
                     </p>
                     <div class="d-flex align-items-center gap-2 text-secondary small">
-                        <span class="badge bg-secondary-subtle text-light border border-secondary">SVX-YYYY-NNNNN</span>
-                        <span>Open & Transparent Civic SLA</span>
+                        <span class="ref-id">SVX-YYYY-NNNNN</span>
+                        <span>Civic Incident Tracking</span>
                     </div>
                 </div>
 
                 <!-- Fast Navigation -->
                 <div class="col-lg-2 col-md-3 col-6">
-                    <h5>Quick Links</h5>
+                    <h5>Navigation</h5>
                     <ul class="list-unstyled small d-flex flex-column gap-2 mb-0">
-                        <li><a href="<?= base_url() ?>">Home Overview</a></li>
-                        <li><a href="<?= base_url('#how-it-works') ?>">How It Works</a></li>
-                        <li><a href="<?= base_url('#why-solvex') ?>">Why Solvex</a></li>
-                        <li><a href="<?= base_url('login.php') ?>">Staff & Admin Login</a></li>
+                        <li><a href="<?= base_url() ?>">Home Ledger</a></li>
+                        <li><a href="<?= base_url('feed.php') ?>">Public Feed</a></li>
+                        <li><a href="<?= base_url('accountability.php') ?>">Accountability</a></li>
+                        <li><a href="<?= base_url('login.php') ?>">Sign In</a></li>
                         <li><a href="<?= base_url('register.php') ?>">Student Registration</a></li>
                     </ul>
                 </div>

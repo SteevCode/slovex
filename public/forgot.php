@@ -61,7 +61,6 @@ if (is_post()) {
 }
 
 $pageTitle = 'Forgot Password';
-$bodyClass = 'bg-light';
 require_once SOLVEX_ROOT . '/includes/header.php';
 ?>
 

@@ -44,7 +44,6 @@ if (is_post()) {
 }
 
 $pageTitle = 'Sign In';
-$bodyClass = 'bg-light';
 require_once SOLVEX_ROOT . '/includes/header.php';
 ?>
 
@@ -52,19 +51,22 @@ require_once SOLVEX_ROOT . '/includes/header.php';
     <div class="auth-split-layout">
         <div class="auth-side">
             <div>
-                <a href="<?= base_url() ?>" class="d-inline-block mb-4 text-white text-decoration-none">
-                    <img src="<?= asset_url('img/logo-with-text.png') ?>" alt="Solvex Report" height="42" class="mb-2" style="filter: brightness(1.2);">
+                <a href="<?= base_url() ?>" class="d-inline-block mb-3 text-decoration-none">
+                    <img src="<?= asset_url('img/logo-with-text.png') ?>" alt="Solvex Report" height="36">
                 </a>
-                <h2 class="h3 fw-bold text-white mb-3">Campus Infrastructure Resolution Platform</h2>
-                <p class="text-white-50 small mb-4">
-                    Report maintenance issues, track real-time resolution SLAs, and keep your campus running at its best.
+                <h2 class="h5 fw-bold mb-2">Campus Incident System</h2>
+                <p class="text-secondary small mb-4">
+                    Official platform for college facilities, hostel maintenance, and transparent department triage.
                 </p>
-                <div class="mb-4">
-                    <img src="<?= asset_url('img/auth-side.webp') ?>" alt="Solvex Campus" class="img-fluid rounded-3 shadow-sm border border-light border-opacity-25" width="400" height="240" loading="eager">
+                <div class="border rounded p-3 bg-white mb-3 small">
+                    <div class="fw-semibold mb-2">Login Credentials:</div>
+                    <div class="text-secondary mb-1">&bull; <strong>Student:</strong> Register number (e.g. <code>2024CS100</code>)</div>
+                    <div class="text-secondary mb-1">&bull; <strong>Staff:</strong> Staff code (e.g. <code>STF001</code>)</div>
+                    <div class="text-secondary">&bull; <strong>Admin:</strong> Admin email (e.g. <code>admin@solvex.edu</code>)</div>
                 </div>
             </div>
-            <div class="pt-3 border-top border-light border-opacity-25 small text-white-50">
-                <i class="bi bi-shield-check text-warning me-1"></i> Transparent campus problem resolution with public civic accountability.
+            <div class="pt-3 border-top small text-secondary">
+                Emergency Facilities: <strong class="text-danger"><?= e(EMERGENCY_CONTACT_PHONE) ?></strong>
             </div>
         </div>
 

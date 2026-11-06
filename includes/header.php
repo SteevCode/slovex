@@ -93,9 +93,8 @@ if ($currentUser && in_array($currentUser['role'], ['staff', 'admin'], true)) {
             <nav class="d-none d-md-flex align-items-center gap-3" aria-label="Primary Navigation">
                 <?php if (!$currentUser): ?>
                     <a href="<?= base_url() ?>" class="nav-link <?= ($activeNav ?? '') === 'home' ? 'active' : '' ?>">Home</a>
-                    <a href="<?= base_url('#how-it-works') ?>" class="nav-link">How It Works</a>
-                    <a href="<?= base_url('#why-solvex') ?>" class="nav-link">Why Solvex</a>
-                    <a href="<?= base_url('feed.php') ?>" class="nav-link">Public Feed</a>
+                    <a href="<?= base_url('feed.php') ?>" class="nav-link <?= ($activeNav ?? '') === 'feed' ? 'active' : '' ?>">Public Feed</a>
+                    <a href="<?= base_url('accountability.php') ?>" class="nav-link <?= ($activeNav ?? '') === 'accountability' ? 'active' : '' ?>">Accountability</a>
                 <?php else: ?>
                     <?php if ($currentUser['role'] === 'student'): ?>
                         <a href="<?= base_url('student/dashboard.php') ?>" class="nav-link <?= ($activeNav ?? '') === 'dashboard' ? 'active' : '' ?>">
