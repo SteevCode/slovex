@@ -98,7 +98,7 @@ try {
 <!-- ── Recent Public Incidents ─────────────────────────────── -->
 <section class="py-5">
     <div class="container">
-        <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-2 mb-3 pb-2 border-bottom">
+        <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-2 mb-3">
             <div>
                 <h2 class="h5 mb-1 text-dark fw-bold">Recent Hostel Maintenance Log</h2>
                 <p class="small text-secondary mb-0">Latest complaints filed and resolved across hostel blocks.</p>

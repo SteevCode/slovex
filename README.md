@@ -105,6 +105,16 @@ In PowerShell from the project root:
 
 ---
 
+## 🔧 Recent Upgrades
+
+* **UI Cleanup** – Separate Staff login button now only in top‑right header; removed student/staff toggle from home page.
+* **Simplified Headers** – Extra subtitle lines and bottom borders removed from hero, stats, and card headers.
+* **Dedicated Login Pages** – `public/login.php` (student) and `public/login_staff.php` (staff) with clear form layouts.
+* **Security Hardenings** – Demo back‑door disabled in production, password hashes using bcrypt, CSRF tokens per session.
+* **Documentation Added** – New `SETUP.md` with full run‑through and password troubleshooting.
+
+---
+
 ## 🧪 Automated Testing & Verification
 
 Run the master test runner to verify 100% test coverage across all hostel workflows:

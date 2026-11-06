@@ -105,7 +105,7 @@ require_once SOLVEX_ROOT . '/includes/header.php';
 
             <!-- Profile Info Card -->
             <div class="card-solvex border-0 shadow-sm mb-4">
-                <div class="card-header bg-white border-bottom p-4">
+                <div class="card-header bg-white border-0 p-4 pb-2">
                     <h5 class="fw-bold text-navy mb-0"><i class="bi bi-person-badge me-2 text-primary"></i> Academic Enrolment Details</h5>
                 </div>
                 <div class="card-body p-4">
@@ -155,7 +155,7 @@ require_once SOLVEX_ROOT . '/includes/header.php';
 
             <!-- Hostel Accommodation Details -->
             <div class="card-solvex border-0 shadow-sm mb-4">
-                <div class="card-header bg-white border-bottom p-4">
+                <div class="card-header bg-white border-0 p-4 pb-2">
                     <h5 class="fw-bold text-navy mb-0"><i class="bi bi-building-check me-2 text-primary"></i> Hostel Accommodation</h5>
                 </div>
                 <div class="card-body p-4">
@@ -190,7 +190,7 @@ require_once SOLVEX_ROOT . '/includes/header.php';
 
             <!-- Change Password Card -->
             <div class="card-solvex border-0 shadow-sm mb-4">
-                <div class="card-header bg-white border-bottom p-4">
+                <div class="card-header bg-white border-0 p-4 pb-2">
                     <h5 class="fw-bold text-navy mb-0"><i class="bi bi-shield-lock me-2 text-primary"></i> Change Password</h5>
                 </div>
                 <div class="card-body p-4">

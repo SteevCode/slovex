@@ -212,7 +212,7 @@ require_once SOLVEX_ROOT . '/includes/header.php';
 
     <!-- Recent Complaints Table / Cards -->
     <div class="card-solvex border-0 shadow-sm mb-5">
-        <div class="card-header bg-white border-bottom p-4 d-flex justify-content-between align-items-center">
+        <div class="card-header bg-white border-0 p-4 pb-2 d-flex justify-content-between align-items-center">
             <h5 class="fw-bold text-navy mb-0"><i class="bi bi-clock me-2 text-primary"></i> Your Recent Complaints</h5>
             <a href="<?= base_url('student/my_complaints.php') ?>" class="small text-primary text-decoration-none fw-semibold">
                 View All <i class="bi bi-arrow-right"></i>

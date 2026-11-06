@@ -1304,7 +1304,7 @@ a:hover {
 /* ── 15. LANDING & HERO SECTION ────────────────────────────────────────────── */
 .hero-section {
     background: var(--clr-surface);
-    border-bottom: 1px solid var(--clr-border);
+    border-bottom: none;
     padding: var(--sp-10) 0 var(--sp-8);
 }
 
@@ -1326,7 +1326,7 @@ a:hover {
 
 .stats-section {
     padding: var(--sp-6) 0;
-    border-bottom: 1px solid var(--clr-border);
+    border-bottom: none;
 }
 
 /* ── 16. AUTH PAGES ────────────────────────────────────────────────────────── */

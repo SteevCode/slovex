@@ -317,8 +317,8 @@ require_once SOLVEX_ROOT . '/includes/header.php';
             <?php else: ?>
 
             <!-- Complaint Submission Form Card -->
-            <div class="card shadow-sm border-0 mb-5">
-                <div class="card-header bg-white border-bottom p-4">
+            <div class="card shadow-sm border mb-5">
+                <div class="card-header bg-white border-0 p-4 pb-2">
                     <div class="d-flex align-items-center justify-content-between">
                         <div>
                             <h1 class="h4 fw-bold text-dark mb-1">Hostel Maintenance Request</h1>
