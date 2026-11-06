@@ -13,6 +13,7 @@ if (!defined('SOLVEX_ROOT')) {
 require_once SOLVEX_ROOT . '/includes/config.php';
 require_once SOLVEX_ROOT . '/includes/db.php';
 require_once SOLVEX_ROOT . '/includes/helpers.php';
+require_once SOLVEX_ROOT . '/includes/ui.php';
 require_once SOLVEX_ROOT . '/includes/auth.php';
 require_once SOLVEX_ROOT . '/includes/csrf.php';
 
@@ -55,8 +56,23 @@ if ($currentUser && in_array($currentUser['role'], ['staff', 'admin'], true)) {
     <!-- Solvex Custom Design System -->
     <link rel="stylesheet" href="<?= asset_url('css/solvex.css') ?>">
     <script>
+        // Apply theme immediately to prevent flashing
+        (function() {
+            var savedTheme = localStorage.getItem('solvex_theme');
+            if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.setAttribute('data-theme', 'dark');
+            } else {
+                document.documentElement.setAttribute('data-theme', 'light');
+            }
+        })();
         window.SOLVEX_BASE_URL = '<?= e(base_url()) ?>';
         window.SOLVEX_CSRF = '<?= e(csrf_token()) ?>';
+        function toggleSolvexTheme() {
+            var current = document.documentElement.getAttribute('data-theme');
+            var next = current === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', next);
+            localStorage.setItem('solvex_theme', next);
+        }
     </script>
 </head>
 <body class="<?= e($bodyClass ?? '') ?>">
@@ -130,6 +146,12 @@ if ($currentUser && in_array($currentUser['role'], ['staff', 'admin'], true)) {
 
             <!-- Actions & User Menu -->
             <div class="d-flex align-items-center gap-2">
+                <!-- Dark Mode Toggle Button -->
+                <button type="button" class="theme-toggle-btn" onclick="toggleSolvexTheme()" title="Toggle Light/Dark Theme" aria-label="Toggle Theme">
+                    <span class="d-inline dark-hide"><?= icon('moon', 16) ?></span>
+                    <span class="d-none dark-show"><?= icon('sun', 16) ?></span>
+                </button>
+
                 <?php if (!$currentUser): ?>
                     <a href="<?= base_url('login.php') ?>" class="btn-solvex btn-ghost btn-sm">Log In</a>
                     <a href="<?= base_url('register.php') ?>" class="btn-solvex btn-primary btn-sm">

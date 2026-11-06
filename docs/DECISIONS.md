@@ -96,3 +96,24 @@ This document records the foundational architectural, security, and design decis
   * Administrative force-closure requires an audit-logged justification reason.
 * **Idempotent Migration Architecture:**
   * Single master installer `scripts/install.php` uses a `schema_migrations` ledger table to record applied migrations, ensuring safe, idempotent re-execution in both CI and live environments.
+
+---
+
+## 7. Visual Redesign & Civic Ledger Decisions
+
+* **Aesthetic Direction: "Quiet Public-Records Office":**
+  * Moved away from SaaS gradient cards, generic hero illustrations, heavy drop shadows, and lift-on-hover translation effects.
+  * Rebuilt `solvex.css` around flat surfaces divided by 1px hairlines (`--clr-border: #E2DFD6`), editorial serif headers (`Source Serif 4` / `Newsreader` / `Georgia`), and compact corner radii (2px to 8px).
+* **Color as Information, Not Decoration:**
+  * Base palette is neutral warm paper (`#F7F6F2`). The brand accent is civic teal (`#0E9F8E` fill, `#0B7A6E` text).
+  * Status colors (green, amber, blue, slate, orange, red) are strictly reserved for functional complaint statuses and SLA alerts.
+* **First-Class Tabular Figures & Reference IDs:**
+  * Monospace font stack (`JetBrains Mono`, `Consolas`) applied to ticket references (`SVX-YYYY-NNNNN`) and counters with `font-variant-numeric: tabular-nums` to ensure exact column alignment.
+* **Pre-Render Theme Switching (Zero-Flicker Dark Mode):**
+  * Theme preference stored in `localStorage` under `solvex_theme`.
+  * Inline `<head>` script evaluates preference and sets `data-theme="dark"` prior to DOM paint, preventing unstyled flash of light theme.
+* **Shared UI Helper Layer (`includes/ui.php`):**
+  * Centralized `icon()`, `status_tag()`, `priority_tag()`, `sla_bar()`, `stat_block()`, `empty_state()`, and `page_header()` into a dedicated UI helper file.
+  * Replaced external icon CDN dependencies with an internal, lightweight inline SVG icon map.
+* **Living Component Styleguide:**
+  * Established `public/styleguide.php` as a developer-only catalog demonstrating all tokens, states, and components in both light and dark themes. Automatically disabled in production environments.
